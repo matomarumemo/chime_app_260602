@@ -265,7 +265,7 @@ volumeBtn.addEventListener('click', () => {
             console.error('音声再生エラー:', error);
         });
         state.isVolumeTestPlaying = true;
-        volumeBtn.textContent = '🔊 停止';
+        volumeBtn.textContent = '🔊 再生停止';
     }
 });
 

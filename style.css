@@ -175,6 +175,17 @@ body {
     letter-spacing: 0.5px;
 }
 
+.footer-link {
+    color: #777777;
+    text-decoration: none;
+    transition: color 0.3s ease, text-decoration 0.3s ease;
+}
+
+.footer-link:hover {
+    color: #aaaaaa;
+    text-decoration: underline;
+}
+
 /* モーダル */
 .modal {
     display: none;

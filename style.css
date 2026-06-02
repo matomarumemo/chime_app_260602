@@ -21,6 +21,25 @@ body {
     max-width: 600px;
     padding: 40px 20px;
     text-align: center;
+    position: relative;
+}
+
+/* 設定ボタン */
+.settings-btn {
+    position: absolute;
+    top: 0;
+    right: 0;
+    font-size: 1.5rem;
+    background: none;
+    border: none;
+    color: #666666;
+    cursor: pointer;
+    padding: 8px;
+    transition: color 0.3s ease;
+}
+
+.settings-btn:hover {
+    color: #ffffff;
 }
 
 /* セッション情報表示エリア */
@@ -156,6 +175,209 @@ body {
     letter-spacing: 0.5px;
 }
 
+/* モーダル */
+.modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.7);
+    z-index: 1000;
+    justify-content: center;
+    align-items: center;
+}
+
+.modal.active {
+    display: flex;
+}
+
+.modal-content {
+    background-color: #1a1a1b;
+    border-radius: 12px;
+    width: 90%;
+    max-width: 500px;
+    max-height: 90vh;
+    overflow-y: auto;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+}
+
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 24px;
+    border-bottom: 1px solid #2a2a2b;
+}
+
+.modal-header h2 {
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: #ffffff;
+}
+
+.close-btn {
+    background: none;
+    border: none;
+    color: #888888;
+    font-size: 2rem;
+    cursor: pointer;
+    padding: 0;
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: color 0.3s ease;
+}
+
+.close-btn:hover {
+    color: #ffffff;
+}
+
+.modal-body {
+    padding: 24px;
+}
+
+.modal-footer {
+    padding: 24px;
+    border-top: 1px solid #2a2a2b;
+}
+
+.modal-footer .btn {
+    width: 100%;
+}
+
+/* 設定セクション */
+.settings-section {
+    margin-bottom: 32px;
+}
+
+.settings-section:last-child {
+    margin-bottom: 0;
+}
+
+.settings-section h3 {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: #ffffff;
+    margin-bottom: 16px;
+}
+
+/* プリセットオプション */
+.preset-options {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.preset-option {
+    display: flex;
+    align-items: center;
+    padding: 16px;
+    background-color: #222223;
+    border: 2px solid #333333;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.preset-option:hover {
+    border-color: #444444;
+    background-color: #2a2a2b;
+}
+
+.preset-option input[type="radio"] {
+    margin-right: 12px;
+    width: 20px;
+    height: 20px;
+    accent-color: #ffffff;
+    cursor: pointer;
+}
+
+.preset-label {
+    color: #ffffff;
+    font-size: 1rem;
+}
+
+.preset-option input[type="radio"]:checked + .preset-label {
+    font-weight: 600;
+}
+
+/* プレミアムセクション */
+.premium-section {
+    position: relative;
+    padding: 20px;
+    background-color: #1a1a1b;
+    border: 2px solid #2a2a2b;
+    border-radius: 8px;
+}
+
+.premium-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(26, 26, 27, 0.6);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    pointer-events: none;
+    z-index: 1;
+}
+
+.premium-badge {
+    background: linear-gradient(135deg, #ffd700 0%, #ffaa00 100%);
+    color: #131314;
+    padding: 8px 24px;
+    border-radius: 20px;
+    font-size: 0.9rem;
+    font-weight: 700;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    box-shadow: 0 2px 8px rgba(255, 215, 0, 0.3);
+}
+
+.premium-section h3 {
+    color: #888888;
+    margin-bottom: 16px;
+}
+
+/* カスタム設定入力欄 */
+.custom-settings {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.input-group {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.input-group label {
+    color: #666666;
+    font-size: 0.9rem;
+}
+
+.input-group input[type="number"] {
+    padding: 12px 16px;
+    background-color: #222223;
+    border: 1px solid #333333;
+    border-radius: 6px;
+    color: #666666;
+    font-size: 1rem;
+    font-family: inherit;
+}
+
+.input-group input[type="number"]:disabled {
+    cursor: not-allowed;
+    opacity: 0.5;
+}
+
 /* レスポンシブ対応 */
 @media (max-width: 768px) {
     #timer {
@@ -172,6 +394,10 @@ body {
         padding: 14px 28px;
         font-size: 1rem;
         min-height: 48px;
+    }
+    
+    .modal-content {
+        width: 95%;
     }
 }
 
@@ -197,5 +423,21 @@ body {
         padding: 16px 24px;
         font-size: 1rem;
         min-height: 52px;
+    }
+    
+    .modal-content {
+        width: 95%;
+        max-height: 95vh;
+    }
+    
+    .modal-header,
+    .modal-body,
+    .modal-footer {
+        padding: 20px;
+    }
+    
+    .premium-badge {
+        padding: 6px 20px;
+        font-size: 0.8rem;
     }
 }

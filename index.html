@@ -8,6 +8,9 @@
 </head>
 <body>
     <div class="container">
+        <!-- 設定ボタン -->
+        <button id="settings-btn" class="settings-btn">⚙️</button>
+
         <!-- 上部：セッション情報表示 -->
         <div class="session-info">
             <div class="period-display">
@@ -41,6 +44,57 @@
         <footer class="footer">
             <p>Sound by OtoLogic</p>
         </footer>
+    </div>
+
+    <!-- 設定モーダル -->
+    <div id="settings-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>設定</h2>
+                <button id="close-modal-btn" class="close-btn">×</button>
+            </div>
+            <div class="modal-body">
+                <!-- プリセット選択 -->
+                <div class="settings-section">
+                    <h3>プリセット</h3>
+                    <div class="preset-options">
+                        <label class="preset-option">
+                            <input type="radio" name="preset" value="A" checked>
+                            <span class="preset-label">A: 45分 / 10分</span>
+                        </label>
+                        <label class="preset-option">
+                            <input type="radio" name="preset" value="B">
+                            <span class="preset-label">B: 90分 / 15分</span>
+                        </label>
+                        <label class="preset-option">
+                            <input type="radio" name="preset" value="C">
+                            <span class="preset-label">C: 20分 / 5分</span>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- カスタム設定（プレミアム機能） -->
+                <div class="settings-section premium-section">
+                    <div class="premium-overlay">
+                        <span class="premium-badge">Premium</span>
+                    </div>
+                    <h3>カスタム設定</h3>
+                    <div class="custom-settings">
+                        <div class="input-group">
+                            <label for="focus-time">FOCUS時間（分）</label>
+                            <input type="number" id="focus-time" value="45" disabled>
+                        </div>
+                        <div class="input-group">
+                            <label for="break-time">BREAK時間（分）</label>
+                            <input type="number" id="break-time" value="10" disabled>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button id="save-settings-btn" class="btn btn-primary">保存して閉じる</button>
+            </div>
+        </div>
     </div>
 
     <script src="script.js"></script>

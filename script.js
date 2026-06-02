@@ -7,6 +7,13 @@ const CONFIG = {
     CHIME_FILE: 'chime.mp3',  // チャイム音声ファイル
 };
 
+// プリセット設定
+const PRESETS = {
+    A: { focus: 45, break: 10 },  // 45分 / 10分
+    B: { focus: 90, break: 15 },  // 90分 / 15分
+    C: { focus: 20, break: 5 },   // 20分 / 5分
+};
+
 // ================================
 // アプリケーション状態管理
 // ================================
@@ -29,6 +36,11 @@ const stateLabel = document.getElementById('state-label');
 const startBtn = document.getElementById('start-btn');
 const resetBtn = document.getElementById('reset-btn');
 const volumeBtn = document.getElementById('volume-btn');
+const settingsBtn = document.getElementById('settings-btn');
+const settingsModal = document.getElementById('settings-modal');
+const closeModalBtn = document.getElementById('close-modal-btn');
+const saveSettingsBtn = document.getElementById('save-settings-btn');
+const presetInputs = document.querySelectorAll('input[name="preset"]');
 
 // ================================
 // 音声管理
@@ -266,6 +278,73 @@ volumeBtn.addEventListener('click', () => {
         });
         state.isVolumeTestPlaying = true;
         volumeBtn.textContent = '🔊 再生停止';
+    }
+});
+
+// ================================
+// 設定モーダル制御
+// ================================
+
+/**
+ * 設定モーダルを開く
+ */
+function openSettingsModal() {
+    settingsModal.classList.add('active');
+}
+
+/**
+ * 設定モーダルを閉じる
+ */
+function closeSettingsModal() {
+    settingsModal.classList.remove('active');
+}
+
+/**
+ * 選択されたプリセットに基づいてタイマー設定を更新する
+ */
+function applyPreset(presetValue) {
+    const preset = PRESETS[presetValue];
+    if (!preset) return;
+    
+    // CONFIG値を更新
+    CONFIG.FOCUS_TIME = preset.focus * 60;
+    CONFIG.BREAK_TIME = preset.break * 60;
+    
+    // READY状態の場合は残り時間も更新
+    if (state.currentState === 'READY') {
+        state.remainingTime = CONFIG.FOCUS_TIME;
+        updateTimerDisplay();
+        updatePageTitle();
+    }
+}
+
+/**
+ * 設定を保存してモーダルを閉じる
+ */
+function saveSettings() {
+    // 選択されたプリセットを取得
+    const selectedPreset = document.querySelector('input[name="preset"]:checked');
+    if (selectedPreset) {
+        applyPreset(selectedPreset.value);
+    }
+    
+    // モーダルを閉じる
+    closeSettingsModal();
+}
+
+// 設定ボタンクリック
+settingsBtn.addEventListener('click', openSettingsModal);
+
+// 閉じるボタンクリック
+closeModalBtn.addEventListener('click', closeSettingsModal);
+
+// 保存して閉じるボタンクリック
+saveSettingsBtn.addEventListener('click', saveSettings);
+
+// モーダル外クリックで閉じる
+settingsModal.addEventListener('click', (e) => {
+    if (e.target === settingsModal) {
+        closeSettingsModal();
     }
 });
 

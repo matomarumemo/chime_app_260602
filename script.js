@@ -42,7 +42,6 @@ const settingsModal = document.getElementById('settings-modal');
 const aboutModal = document.getElementById('about-modal');
 const closeModalBtn = document.getElementById('close-modal-btn');
 const closeAboutModalBtn = document.getElementById('close-about-modal-btn');
-const closeAboutModalFooterBtn = document.getElementById('close-about-modal-footer-btn');
 const saveSettingsBtn = document.getElementById('save-settings-btn');
 const presetInputs = document.querySelectorAll('input[name="preset"]');
 
@@ -372,11 +371,8 @@ function closeAboutModal() {
 // Aboutボタンクリック
 aboutBtn.addEventListener('click', openAboutModal);
 
-// 閉じるボタンクリック（ヘッダー）
+// 閉じるボタンクリック
 closeAboutModalBtn.addEventListener('click', closeAboutModal);
-
-// 閉じるボタンクリック（フッター）
-closeAboutModalFooterBtn.addEventListener('click', closeAboutModal);
 
 // モーダル外クリックで閉じる
 aboutModal.addEventListener('click', (e) => {

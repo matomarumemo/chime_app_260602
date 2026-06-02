@@ -8,8 +8,11 @@
 </head>
 <body>
     <div class="container">
-        <!-- 設定ボタン -->
-        <button id="settings-btn" class="settings-btn">⚙️</button>
+        <!-- ヘッダーボタン -->
+        <div class="header-buttons">
+            <button id="settings-btn" class="header-btn">⚙️</button>
+            <button id="about-btn" class="header-btn">😊</button>
+        </div>
 
         <!-- 上部：セッション情報表示 -->
         <div class="session-info">
@@ -93,6 +96,45 @@
             </div>
             <div class="modal-footer">
                 <button id="save-settings-btn" class="btn btn-primary">保存して閉じる</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Aboutモーダル -->
+    <div id="about-modal" class="modal">
+        <div class="modal-content about-modal-content">
+            <div class="modal-header">
+                <h2>About</h2>
+                <button id="close-about-modal-btn" class="close-btn">×</button>
+            </div>
+            <div class="modal-body about-modal-body">
+                <div class="about-section">
+                    <h3>開発秘話</h3>
+                    <p>このタイマーは、集中して作業したいという思いから生まれました。学校のチャイムのようなリズムで、自然に休憩を取りながら効率的に作業できるように設計しました。</p>
+                </div>
+
+                <div class="about-section">
+                    <h3>使い方</h3>
+                    <ol>
+                        <li>「START」ボタンを押してタイマーを開始します</li>
+                        <li>FOCUS時間（デフォルト45分）が終了するとチャイムが鳴り、自動的にBREAK時間へ移行します</li>
+                        <li>BREAK時間（デフォルト10分）が終了すると、自動的に次のFOCUS時間へ移行します</li>
+                        <li>「PAUSE」で一時停止、「RESET」でリセットできます</li>
+                        <li>設定ボタン（⚙️）でプリセットを変更できます</li>
+                    </ol>
+                </div>
+
+                <div class="about-section">
+                    <h3>裏技</h3>
+                    <ul>
+                        <li>音量確認ボタンで、チャイムの音量を事前に確認できます</li>
+                        <li>ブラウザのタブを見るだけで、残り時間と現在の状態がわかります</li>
+                        <li>スマホでも使いやすいよう、ボタンサイズを大きくしています</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button id="close-about-modal-footer-btn" class="btn btn-primary">閉じる</button>
             </div>
         </div>
     </div>

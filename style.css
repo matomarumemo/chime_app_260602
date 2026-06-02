@@ -24,11 +24,16 @@ body {
     position: relative;
 }
 
-/* 設定ボタン */
-.settings-btn {
+/* ヘッダーボタン */
+.header-buttons {
     position: absolute;
     top: 0;
     right: 0;
+    display: flex;
+    gap: 8px;
+}
+
+.header-btn {
     font-size: 1.5rem;
     background: none;
     border: none;
@@ -38,7 +43,7 @@ body {
     transition: color 0.3s ease;
 }
 
-.settings-btn:hover {
+.header-btn:hover {
     color: #ffffff;
 }
 
@@ -389,6 +394,50 @@ body {
     opacity: 0.5;
 }
 
+/* Aboutモーダル */
+.about-modal-content {
+    max-width: 600px;
+}
+
+.about-modal-body {
+    max-height: 70vh;
+    overflow-y: auto;
+}
+
+.about-section {
+    margin-bottom: 32px;
+}
+
+.about-section:last-child {
+    margin-bottom: 0;
+}
+
+.about-section h3 {
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: #ffffff;
+    margin-bottom: 16px;
+}
+
+.about-section p {
+    color: #aaaaaa;
+    font-size: 0.95rem;
+    line-height: 1.8;
+    margin-bottom: 12px;
+}
+
+.about-section ol,
+.about-section ul {
+    color: #aaaaaa;
+    font-size: 0.95rem;
+    line-height: 1.8;
+    padding-left: 24px;
+}
+
+.about-section li {
+    margin-bottom: 8px;
+}
+
 /* レスポンシブ対応 */
 @media (max-width: 768px) {
     #timer {
@@ -409,6 +458,11 @@ body {
     
     .modal-content {
         width: 95%;
+    }
+    
+    .header-btn {
+        font-size: 1.3rem;
+        padding: 6px;
     }
 }
 
@@ -450,5 +504,24 @@ body {
     .premium-badge {
         padding: 6px 20px;
         font-size: 0.8rem;
+    }
+    
+    .header-buttons {
+        gap: 6px;
+    }
+    
+    .header-btn {
+        font-size: 1.2rem;
+        padding: 6px;
+    }
+    
+    .about-section h3 {
+        font-size: 1.1rem;
+    }
+    
+    .about-section p,
+    .about-section ol,
+    .about-section ul {
+        font-size: 0.9rem;
     }
 }

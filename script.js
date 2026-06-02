@@ -37,8 +37,12 @@ const startBtn = document.getElementById('start-btn');
 const resetBtn = document.getElementById('reset-btn');
 const volumeBtn = document.getElementById('volume-btn');
 const settingsBtn = document.getElementById('settings-btn');
+const aboutBtn = document.getElementById('about-btn');
 const settingsModal = document.getElementById('settings-modal');
+const aboutModal = document.getElementById('about-modal');
 const closeModalBtn = document.getElementById('close-modal-btn');
+const closeAboutModalBtn = document.getElementById('close-about-modal-btn');
+const closeAboutModalFooterBtn = document.getElementById('close-about-modal-footer-btn');
 const saveSettingsBtn = document.getElementById('save-settings-btn');
 const presetInputs = document.querySelectorAll('input[name="preset"]');
 
@@ -344,6 +348,40 @@ saveSettingsBtn.addEventListener('click', saveSettings);
 settingsModal.addEventListener('click', (e) => {
     if (e.target === settingsModal) {
         closeSettingsModal();
+    }
+});
+
+// ================================
+// Aboutモーダル制御
+// ================================
+
+/**
+ * Aboutモーダルを開く
+ */
+function openAboutModal() {
+    aboutModal.classList.add('active');
+}
+
+/**
+ * Aboutモーダルを閉じる
+ */
+function closeAboutModal() {
+    aboutModal.classList.remove('active');
+}
+
+// Aboutボタンクリック
+aboutBtn.addEventListener('click', openAboutModal);
+
+// 閉じるボタンクリック（ヘッダー）
+closeAboutModalBtn.addEventListener('click', closeAboutModal);
+
+// 閉じるボタンクリック（フッター）
+closeAboutModalFooterBtn.addEventListener('click', closeAboutModal);
+
+// モーダル外クリックで閉じる
+aboutModal.addEventListener('click', (e) => {
+    if (e.target === aboutModal) {
+        closeAboutModal();
     }
 });
 

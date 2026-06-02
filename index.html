@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chime Timer</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <!-- 上部：セッション情報表示 -->
+        <div class="session-info">
+            <div class="period-display">
+                <span id="period-label">1st Period</span>
+            </div>
+            <div class="state-display">
+                <span id="state-label">READY</span>
+            </div>
+        </div>
+
+        <!-- 中央：残り時間表示 -->
+        <div class="timer-display">
+            <span id="timer">00:00</span>
+        </div>
+
+        <!-- 下部：操作ボタン -->
+        <div class="controls">
+            <button id="start-btn" class="btn btn-primary">START</button>
+            <button id="reset-btn" class="btn btn-secondary">RESET</button>
+        </div>
+
+        <!-- 将来的な広告追加用スペース -->
+        <div id="ad-space"></div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>

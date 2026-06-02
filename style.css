@@ -1,0 +1,144 @@
+/* 基本設定 */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background-color: #131314;
+    color: #ffffff;
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+/* コンテナ */
+.container {
+    width: 100%;
+    max-width: 600px;
+    padding: 40px 20px;
+    text-align: center;
+}
+
+/* セッション情報表示エリア */
+.session-info {
+    margin-bottom: 60px;
+}
+
+.period-display {
+    font-size: 1.2rem;
+    color: #888888;
+    margin-bottom: 10px;
+    letter-spacing: 1px;
+}
+
+.state-display {
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: #ffffff;
+    letter-spacing: 2px;
+}
+
+/* タイマー表示エリア */
+.timer-display {
+    margin-bottom: 60px;
+}
+
+#timer {
+    font-size: 8rem;
+    font-weight: 700;
+    color: #ffffff;
+    letter-spacing: 4px;
+    font-variant-numeric: tabular-nums;
+}
+
+/* 操作ボタンエリア */
+.controls {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    margin-bottom: 40px;
+}
+
+.btn {
+    padding: 16px 48px;
+    font-size: 1.1rem;
+    font-weight: 600;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    letter-spacing: 1px;
+}
+
+.btn-primary {
+    background-color: #ffffff;
+    color: #131314;
+}
+
+.btn-primary:hover {
+    background-color: #e0e0e0;
+    transform: translateY(-2px);
+}
+
+.btn-primary:active {
+    transform: translateY(0);
+}
+
+.btn-secondary {
+    background-color: transparent;
+    color: #888888;
+    border: 2px solid #888888;
+}
+
+.btn-secondary:hover {
+    border-color: #ffffff;
+    color: #ffffff;
+    transform: translateY(-2px);
+}
+
+.btn-secondary:active {
+    transform: translateY(0);
+}
+
+/* 広告スペース */
+#ad-space {
+    min-height: 100px;
+    margin-top: 40px;
+    border: 1px dashed #333333;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: #444444;
+    font-size: 0.9rem;
+}
+
+/* レスポンシブ対応 */
+@media (max-width: 768px) {
+    #timer {
+        font-size: 5rem;
+    }
+    
+    .btn {
+        padding: 14px 36px;
+        font-size: 1rem;
+    }
+}
+
+@media (max-width: 480px) {
+    #timer {
+        font-size: 4rem;
+    }
+    
+    .controls {
+        flex-direction: column;
+        gap: 15px;
+    }
+    
+    .btn {
+        width: 100%;
+    }
+}

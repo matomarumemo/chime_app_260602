@@ -17,6 +17,7 @@ let state = {
     currentState: 'READY',            // 現在の状態：READY, FOCUS, BREAK
     timerId: null,                     // setIntervalのID
     audioInitialized: false,           // 音声コンテキスト初期化フラグ
+    isVolumeTestPlaying: false,        // 音量テスト再生中フラグ
 };
 
 // ================================
@@ -43,6 +44,13 @@ function initializeAudio() {
     
     audioElement = new Audio(CONFIG.CHIME_FILE);
     audioElement.load();
+    
+    // 音声再生完了時のイベントリスナーを設定
+    audioElement.addEventListener('ended', () => {
+        state.isVolumeTestPlaying = false;
+        volumeBtn.textContent = '🔊 音量確認';
+    });
+    
     state.audioInitialized = true;
 }
 
@@ -243,8 +251,22 @@ resetBtn.addEventListener('click', resetTimer);
 volumeBtn.addEventListener('click', () => {
     // 音声コンテキストの初期化
     initializeAudio();
-    // チャイム再生
-    playChime();
+    
+    if (state.isVolumeTestPlaying) {
+        // 再生中の場合は停止
+        audioElement.pause();
+        audioElement.currentTime = 0;
+        state.isVolumeTestPlaying = false;
+        volumeBtn.textContent = '🔊 音量確認';
+    } else {
+        // 停止中の場合は再生
+        audioElement.currentTime = 0;
+        audioElement.play().catch(error => {
+            console.error('音声再生エラー:', error);
+        });
+        state.isVolumeTestPlaying = true;
+        volumeBtn.textContent = '🔊 停止';
+    }
 });
 
 // ================================

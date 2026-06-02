@@ -214,13 +214,9 @@ function resetTimer() {
 
 /**
  * タイマー完了時の処理
- * FOCUS→BREAK、BREAK→FOCUSを自動的に切り替える
+ * FOCUS→BREAK、BREAK→FOCUSを自動的に切り替えて継続
  */
 function handleTimerComplete() {
-    // タイマー停止
-    clearInterval(state.timerId);
-    state.isRunning = false;
-    
     // チャイム再生
     playChime();
     
@@ -238,9 +234,12 @@ function handleTimerComplete() {
     }
     
     // UI更新
-    startBtn.textContent = 'START';
     updateStateDisplay();
     updateTimerDisplay();
+    updatePageTitle();
+    
+    // 自動的に次のセッションを開始
+    startTimer();
 }
 
 // ================================

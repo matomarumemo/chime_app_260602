@@ -27,6 +27,7 @@ const periodLabel = document.getElementById('period-label');
 const stateLabel = document.getElementById('state-label');
 const startBtn = document.getElementById('start-btn');
 const resetBtn = document.getElementById('reset-btn');
+const volumeBtn = document.getElementById('volume-btn');
 
 // ================================
 // 音声管理
@@ -104,6 +105,25 @@ function updateAllDisplays() {
     updateTimerDisplay();
     updatePeriodDisplay();
     updateStateDisplay();
+    updatePageTitle();
+}
+
+/**
+ * ブラウザタブのタイトルを更新する
+ * タイマー動作中は「残り時間 [分:秒] - FOCUS/BREAK」を表示
+ */
+function updatePageTitle() {
+    const minutes = Math.floor(state.remainingTime / 60);
+    const seconds = state.remainingTime % 60;
+    const formattedTime = 
+        String(minutes).padStart(2, '0') + ':' + 
+        String(seconds).padStart(2, '0');
+    
+    if (state.currentState === 'READY') {
+        document.title = 'Chime Timer';
+    } else {
+        document.title = `${formattedTime} - ${state.currentState}`;
+    }
 }
 
 // ================================
@@ -134,6 +154,7 @@ function startTimer() {
     state.timerId = setInterval(() => {
         state.remainingTime--;
         updateTimerDisplay();
+        updatePageTitle(); // タイトルをリアルタイム更新
         
         // タイマー終了時の処理
         if (state.remainingTime <= 0) {
@@ -217,6 +238,14 @@ startBtn.addEventListener('click', () => {
 
 // RESETボタン
 resetBtn.addEventListener('click', resetTimer);
+
+// 音量確認ボタン
+volumeBtn.addEventListener('click', () => {
+    // 音声コンテキストの初期化
+    initializeAudio();
+    // チャイム再生
+    playChime();
+});
 
 // ================================
 // 初期化

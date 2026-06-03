@@ -417,14 +417,25 @@ function updatePeriodDisplay() {
  * 状態（FOCUS/BREAK/READY）を更新する
  */
 function updateStateDisplay() {
-    if (selectedTaskId && state.currentState === 'FOCUS') {
-        const task = tasks.find(t => t.id === selectedTaskId);
-        if (task) {
-            stateLabel.textContent = task.name;
-            return;
+    if (state.currentState === 'FOCUS') {
+        if (selectedTaskId) {
+            const task = tasks.find(t => t.id === selectedTaskId);
+            if (task) {
+                stateLabel.textContent = task.name;
+                return;
+            }
         }
+        stateLabel.textContent = 'FOCUS';
+    } else if (state.currentState === 'BREAK') {
+        const nextTask = getNextTask();
+        if (nextTask) {
+            stateLabel.textContent = `Break - Next: ${nextTask.name}`;
+        } else {
+            stateLabel.textContent = 'Break - Nice work!';
+        }
+    } else {
+        stateLabel.textContent = state.currentState;
     }
-    stateLabel.textContent = state.currentState;
 }
 
 /**
@@ -615,6 +626,40 @@ function moveToNextTask() {
         // タスクが選択されていない場合、最初のタスクを選択
         selectTask(tasks[0].id);
     }
+}
+
+/**
+ * 次のタスクを取得する
+ */
+function getNextTask() {
+    if (tasks.length === 0) return null;
+    
+    // 全タスクが完了しているかチェック
+    const allComplete = tasks.every(t => t.completedSessions >= t.targetSessions);
+    if (allComplete) {
+        return null; // 全タスク完了
+    }
+    
+    // 現在のタスクが完了している場合、次の未完了タスクを探す
+    if (selectedTaskId) {
+        const currentTask = tasks.find(t => t.id === selectedTaskId);
+        if (currentTask && currentTask.completedSessions >= currentTask.targetSessions) {
+            const nextTask = tasks.find(t => t.completedSessions < t.targetSessions);
+            return nextTask;
+        }
+    }
+    
+    // 現在のタスクが未完了の場合、それを返す
+    if (selectedTaskId) {
+        const currentTask = tasks.find(t => t.id === selectedTaskId);
+        if (currentTask && currentTask.completedSessions < currentTask.targetSessions) {
+            return currentTask;
+        }
+    }
+    
+    // タスクが選択されていない場合、最初の未完了タスクを返す
+    const firstIncompleteTask = tasks.find(t => t.completedSessions < t.targetSessions);
+    return firstIncompleteTask;
 }
 
 // ================================

@@ -19,13 +19,10 @@ let CONFIG = {
 
 // 利用可能なアラーム音
 const AVAILABLE_SOUNDS = [
-    'Phone.mp3',
-    'Pirorin.mp3',
     'School.mp3',
     'ShortBell1.mp3',
     'ShortBell2.mp3',
-    'Uguisu.mp3',
-    'Winning.mp3'
+    'Uguisu.mp3'
 ];
 
 // ================================

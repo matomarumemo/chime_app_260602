@@ -59,7 +59,6 @@ const taskNameInput = document.getElementById('task-name');
 const taskSessionsInput = document.getElementById('task-sessions');
 const saveTaskBtn = document.getElementById('save-task-btn');
 const deleteTaskBtn = document.getElementById('delete-task-btn');
-const currentTaskDisplay = document.getElementById('current-task-display');
 
 // ================================
 // タスク管理
@@ -188,7 +187,7 @@ function deleteSelectedTasks() {
     // 選択中のタスクが削除された場合、選択を解除
     if (selectedTaskId && selectedTasks.has(selectedTaskId)) {
         selectedTaskId = null;
-        updateCurrentTaskDisplay();
+        updateStateDisplay();
     }
     
     selectedTasks.clear();
@@ -233,7 +232,7 @@ function deleteTask(id) {
     tasks = tasks.filter(t => t.id !== id);
     if (selectedTaskId === id) {
         selectedTaskId = null;
-        updateCurrentTaskDisplay();
+        updateStateDisplay();
     }
     saveTasks();
     renderTasks();
@@ -245,39 +244,7 @@ function deleteTask(id) {
 function selectTask(id) {
     selectedTaskId = id;
     renderTasks();
-    updateCurrentTaskDisplay();
-}
-
-/**
- * 現在のタスク表示を更新する
- */
-function updateCurrentTaskDisplay() {
-    if (state.currentState === 'BREAK') {
-        // BREAKモード時は次のタスクを表示
-        const nextTask = getNextTask();
-        if (nextTask) {
-            currentTaskDisplay.textContent = `Next: ${nextTask.name}`;
-            currentTaskDisplay.classList.add('active', 'break-mode');
-        } else {
-            currentTaskDisplay.textContent = 'Next: All tasks complete!';
-            currentTaskDisplay.classList.add('active', 'break-mode');
-        }
-    } else if (selectedTaskId) {
-        // FOCUSモード時は現在のタスクを表示
-        const task = tasks.find(t => t.id === selectedTaskId);
-        if (task) {
-            const sessionInfo = `${task.completedSessions + 1}/${task.targetSessions}`;
-            currentTaskDisplay.textContent = `${task.name} (${sessionInfo})`;
-            currentTaskDisplay.classList.add('active');
-            currentTaskDisplay.classList.remove('break-mode');
-            return;
-        }
-    }
-    
-    if (!selectedTaskId && state.currentState !== 'BREAK') {
-        currentTaskDisplay.textContent = '';
-        currentTaskDisplay.classList.remove('active', 'break-mode');
-    }
+    updateStateDisplay();
 }
 
 /**
@@ -436,7 +403,8 @@ function updateStateDisplay() {
         if (selectedTaskId) {
             const task = tasks.find(t => t.id === selectedTaskId);
             if (task) {
-                stateLabel.textContent = task.name;
+                const sessionInfo = `${task.completedSessions + 1}/${task.targetSessions}`;
+                stateLabel.textContent = `${task.name} (${sessionInfo})`;
                 return;
             }
         }
@@ -582,7 +550,7 @@ function handleTimerComplete() {
                 }
                 saveTasks();
                 renderTasks();
-                updateCurrentTaskDisplay();
+                updateStateDisplay();
             }
         }
         

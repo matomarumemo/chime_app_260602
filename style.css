@@ -117,24 +117,6 @@ body {
     letter-spacing: 2px;
 }
 
-.current-task-display {
-    font-size: 1rem;
-    color: #ffffff;
-    font-weight: 700;
-    margin-top: 8px;
-    display: none;
-}
-
-.current-task-display.active {
-    display: block;
-}
-
-.current-task-display.break-mode {
-    color: #888888;
-    font-weight: 500;
-    font-style: italic;
-}
-
 /* タイマー表示エリア */
 .timer-display {
     margin-bottom: 30px;

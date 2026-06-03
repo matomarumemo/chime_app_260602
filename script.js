@@ -29,25 +29,34 @@ const availableSounds = [
 const DEFAULT_ALARM_SOUND = 'School.mp3';
 
 /**
+ * 音声ファイルのパスを取得する（統一されたパス生成関数）
+ * @param {string} fileName - 音声ファイル名
+ * @returns {string} 音声ファイルのフルパス
+ */
+function getSoundPath(fileName) {
+    return 'sounds/' + fileName;
+}
+
+/**
  * アラーム音を再生する（統一された再生関数）
  * @param {string} fileName - 音声ファイル名
  */
 function playAlarmSound(fileName) {
-    const path = 'sounds/' + fileName;
+    const path = getSoundPath(fileName);
     
     try {
         const audio = new Audio(path);
         audio.play().catch(error => {
             console.error('音声再生エラー:', error);
             // エラー時はデフォルト音を再生
-            const fallbackAudio = new Audio('sounds/' + DEFAULT_ALARM_SOUND);
+            const fallbackAudio = new Audio(getSoundPath(DEFAULT_ALARM_SOUND));
             fallbackAudio.play().catch(e => console.error('フォールバック音声再生エラー:', e));
         });
     } catch (error) {
         console.error('Audioオブジェクト生成エラー:', error);
         // エラー時はデフォルト音を再生
         try {
-            const fallbackAudio = new Audio('sounds/' + DEFAULT_ALARM_SOUND);
+            const fallbackAudio = new Audio(getSoundPath(DEFAULT_ALARM_SOUND));
             fallbackAudio.play().catch(e => console.error('フォールバック音声再生エラー:', e));
         } catch (fallbackError) {
             console.error('フォールバックAudioオブジェクト生成エラー:', fallbackError);
@@ -430,7 +439,7 @@ function previewSound() {
             previewAudioElement.currentTime = 0;
         }
         
-        previewAudioElement = new Audio('sounds/' + selectedSound);
+        previewAudioElement = new Audio(getSoundPath(selectedSound));
         previewAudioElement.play();
         isPreviewPlaying = true;
         playIcon.style.display = 'none';

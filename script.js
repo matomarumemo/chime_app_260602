@@ -94,7 +94,7 @@ function renderTasks() {
     
     tasks.forEach(task => {
         const taskItem = document.createElement('div');
-        taskItem.className = `task-item ${selectedTaskId === task.id ? 'selected' : ''}`;
+        taskItem.className = 'task-item';
         taskItem.dataset.taskId = task.id;
         
         taskItem.innerHTML = `
@@ -117,13 +117,6 @@ function renderTasks() {
         `;
         
         taskList.appendChild(taskItem);
-        
-        // タスク選択イベント
-        taskItem.addEventListener('click', (e) => {
-            if (!e.target.closest('.task-menu-btn')) {
-                selectTask(task.id);
-            }
-        });
         
         // メニューボタンイベント
         const menuBtn = taskItem.querySelector('.task-menu-btn');

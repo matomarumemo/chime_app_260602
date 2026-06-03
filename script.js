@@ -50,6 +50,7 @@ const autoStartBreaksInput = document.getElementById('auto-start-breaks');
 const autoStartPomodorosInput = document.getElementById('auto-start-pomodoros');
 const volumeInput = document.getElementById('volume');
 const volumeValue = document.getElementById('volume-value');
+const volumePreviewBtn = document.getElementById('volume-preview-btn');
 
 // タスク管理関連のDOM要素
 const addTaskBtn = document.getElementById('add-task-btn');
@@ -775,6 +776,15 @@ volumeInput.addEventListener('input', () => {
     }
     
     saveSettings();
+});
+
+// 音量プレビューボタンのクリックイベント
+volumePreviewBtn.addEventListener('click', () => {
+    const testAudio = new Audio(CONFIG.CHIME_FILE);
+    testAudio.volume = CONFIG.volume / 100;
+    testAudio.play().catch(error => {
+        console.error('音量プレビュー再生エラー:', error);
+    });
 });
 
 // ================================

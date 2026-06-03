@@ -57,8 +57,6 @@ const taskModalTitle = document.getElementById('task-modal-title');
 const taskNameInput = document.getElementById('task-name');
 const taskSessionsInput = document.getElementById('task-sessions');
 const saveTaskBtn = document.getElementById('save-task-btn');
-const taskContextMenu = document.getElementById('task-context-menu');
-const editTaskBtn = document.getElementById('edit-task-btn');
 const deleteTaskBtn = document.getElementById('delete-task-btn');
 const currentTaskDisplay = document.getElementById('current-task-display');
 
@@ -132,7 +130,13 @@ function renderTasks() {
     const menuBtn = taskItem.querySelector('.task-menu-btn');
     menuBtn.addEventListener('click', (e) => {
         e.stopPropagation();
-        showTaskMenu(task.id, menuBtn);
+        editingTaskId = task.id;
+        const task = tasks.find(t => t.id === task.id);
+        if (task) {
+            taskNameInput.value = task.name;
+            taskSessionsInput.value = task.targetSessions;
+            openTaskModal(true);
+        }
     });
 }
 
@@ -211,8 +215,10 @@ function openTaskModal(isEdit = false) {
     taskModal.classList.add('active');
     if (isEdit) {
         taskModalTitle.textContent = 'Edit Task';
+        deleteTaskBtn.style.display = 'block';
     } else {
         taskModalTitle.textContent = 'Add Task';
+        deleteTaskBtn.style.display = 'none';
         taskNameInput.value = '';
         taskSessionsInput.value = 1;
     }
@@ -224,30 +230,7 @@ function openTaskModal(isEdit = false) {
 function closeTaskModal() {
     taskModal.classList.remove('active');
     editingTaskId = null;
-}
-
-/**
- * タスクコンテキストメニューを表示する
- */
-function showTaskMenu(taskId, buttonElement) {
-    editingTaskId = taskId;
-    
-    // ボタンの位置を取得
-    const rect = buttonElement.getBoundingClientRect();
-    
-    // コンテキストメニューの位置を設定（ボタンの右側に表示）
-    taskContextMenu.style.top = `${rect.bottom + 5}px`;
-    taskContextMenu.style.right = `${window.innerWidth - rect.right}px`;
-    
-    taskContextMenu.classList.add('active');
-}
-
-/**
- * タスクコンテキストメニューを閉じる
- */
-function closeTaskContextMenu() {
-    taskContextMenu.classList.remove('active');
-    editingTaskId = null;
+    deleteTaskBtn.style.display = 'none';
 }
 
 // ================================
@@ -653,30 +636,12 @@ taskModal.addEventListener('click', (e) => {
     }
 });
 
-// タスクコンテキストメニューの編集ボタン
-editTaskBtn.addEventListener('click', () => {
-    const task = tasks.find(t => t.id === editingTaskId);
-    if (task) {
-        taskNameInput.value = task.name;
-        taskSessionsInput.value = task.targetSessions;
-        closeTaskContextMenu();
-        openTaskModal(true);
-    }
-});
-
-// タスクコンテキストメニューの削除ボタン
+// タスク削除ボタン
 deleteTaskBtn.addEventListener('click', () => {
     if (editingTaskId) {
         deleteTask(editingTaskId);
     }
-    closeTaskContextMenu();
-});
-
-// ドキュメントクリックでコンテキストメニューを閉じる
-document.addEventListener('click', (e) => {
-    if (!e.target.closest('.task-context-menu') && !e.target.closest('.task-menu-btn')) {
-        closeTaskContextMenu();
-    }
+    closeTaskModal();
 });
 
 // Sign Inボタンクリック（プレースホルダー）

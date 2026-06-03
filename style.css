@@ -89,6 +89,16 @@ body {
     background-color: rgba(255, 255, 255, 0.3);
 }
 
+.header-nav-btn.unimplemented {
+    color: #666666;
+    background-color: rgba(255, 255, 255, 0.1);
+    cursor: default;
+}
+
+.header-nav-btn.unimplemented:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
 .header-nav-btn svg {
     flex-shrink: 0;
 }

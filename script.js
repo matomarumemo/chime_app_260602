@@ -776,14 +776,14 @@ deleteTaskBtn.addEventListener('click', () => {
     closeTaskModal();
 });
 
-// Sign Inボタンクリック（プレースホルダー）
+// Sign Inボタンクリック（未実装）
 signinBtn.addEventListener('click', () => {
-    console.log('Sign In clicked - functionality to be implemented');
+    // 未実装：何もしない
 });
 
-// Menuボタンクリック（プレースホルダー）
+// Menuボタンクリック（未実装）
 menuBtn.addEventListener('click', () => {
-    console.log('Menu clicked - functionality to be implemented');
+    // 未実装：何もしない
 });
 
 // ================================

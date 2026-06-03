@@ -135,12 +135,18 @@ function updateAllDisplays() {
  * タイマーの状態に応じてタイトルを変更
  */
 function updatePageTitle() {
+    const minutes = Math.floor(state.remainingTime / 60);
+    const seconds = state.remainingTime % 60;
+    const formattedTime = 
+        String(minutes).padStart(2, '0') + ':' + 
+        String(seconds).padStart(2, '0');
+    
     if (state.currentState === 'READY') {
         document.title = 'Focus Timer';
     } else if (state.currentState === 'FOCUS') {
-        document.title = state.isRunning ? 'Focus' : 'Pause';
+        document.title = state.isRunning ? `Focus (${formattedTime})` : `Pause (${formattedTime})`;
     } else if (state.currentState === 'BREAK') {
-        document.title = state.isRunning ? 'Break' : 'Pause';
+        document.title = state.isRunning ? `Break (${formattedTime})` : `Pause (${formattedTime})`;
     }
 }
 

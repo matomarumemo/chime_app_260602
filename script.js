@@ -346,6 +346,12 @@ function saveSettings() {
     CONFIG.autoStartPomodoros = settings.autoStartPomodoros;
     CONFIG.CHIME_FILE = settings.alarmSound;
     
+    // アラーム音が変更された場合、音声要素を再初期化
+    if (audioElement) {
+        audioElement.src = `sounds/${CONFIG.CHIME_FILE}`;
+        audioElement.load();
+    }
+    
     // タイマーが停止中の場合、残り時間を更新
     if (!state.isRunning && state.currentState === 'READY') {
         state.remainingTime = CONFIG.FOCUS_TIME;
@@ -424,7 +430,7 @@ let isPreviewPlaying = false;
  * ブラウザの自動再生制限を回避するため、ユーザー操作時に呼び出す
  */
 function initializeAudio() {
-    audioElement = new Audio(CONFIG.CHIME_FILE);
+    audioElement = new Audio(`sounds/${CONFIG.CHIME_FILE}`);
     audioElement.load();
     
     // 音声再生完了時のイベントリスナーを設定

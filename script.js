@@ -117,26 +117,26 @@ function renderTasks() {
         `;
         
         taskList.appendChild(taskItem);
-    });
-    
-    // タスク選択イベント
-    taskItem.addEventListener('click', (e) => {
-        if (!e.target.closest('.task-menu-btn')) {
-            selectTask(task.id);
-        }
-    });
-    
-    // メニューボタンイベント
-    const menuBtn = taskItem.querySelector('.task-menu-btn');
-    menuBtn.addEventListener('click', (e) => {
-        e.stopPropagation();
-        editingTaskId = task.id;
-        const task = tasks.find(t => t.id === task.id);
-        if (task) {
-            taskNameInput.value = task.name;
-            taskSessionsInput.value = task.targetSessions;
-            openTaskModal(true);
-        }
+        
+        // タスク選択イベント
+        taskItem.addEventListener('click', (e) => {
+            if (!e.target.closest('.task-menu-btn')) {
+                selectTask(task.id);
+            }
+        });
+        
+        // メニューボタンイベント
+        const menuBtn = taskItem.querySelector('.task-menu-btn');
+        menuBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            editingTaskId = task.id;
+            const task = tasks.find(t => t.id === task.id);
+            if (task) {
+                taskNameInput.value = task.name;
+                taskSessionsInput.value = task.targetSessions;
+                openTaskModal(true);
+            }
+        });
     });
 }
 

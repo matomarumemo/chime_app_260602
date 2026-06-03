@@ -486,8 +486,11 @@ function updatePeriodDisplay() {
  * 状態（FOCUS/BREAK/READY）を更新する
  */
 function updateStateDisplay() {
+    // タスクがアクティブかどうかを判定
+    const hasActiveTasks = tasks.length > 0 && state.selectedTasks.size > 0;
+    
     if (state.currentState === 'FOCUS') {
-        if (selectedTaskId) {
+        if (hasActiveTasks && selectedTaskId) {
             const task = tasks.find(t => t.id === selectedTaskId);
             if (task) {
                 const sessionInfo = `${task.completedSessions + 1}/${task.targetSessions}`;
@@ -497,11 +500,15 @@ function updateStateDisplay() {
         }
         stateLabel.textContent = 'FOCUS';
     } else if (state.currentState === 'BREAK') {
-        const nextTask = getNextTask();
-        if (nextTask) {
-            stateLabel.textContent = `Break - Next: ${nextTask.name}`;
+        if (hasActiveTasks) {
+            const nextTask = getNextTask();
+            if (nextTask) {
+                stateLabel.textContent = `Break - Next: ${nextTask.name}`;
+            } else {
+                stateLabel.textContent = 'All Completed!';
+            }
         } else {
-            stateLabel.textContent = 'All Completed!';
+            stateLabel.textContent = 'BREAK';
         }
     } else {
         stateLabel.textContent = state.currentState;

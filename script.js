@@ -344,9 +344,15 @@ function saveSettings() {
     CONFIG.CHIME_FILE = settings.alarmSound;
     
     // アラーム音が変更された場合、音声要素を再初期化
-    if (audioElement) {
-        audioElement.src = `sounds/${CONFIG.CHIME_FILE}`;
+    if (state.audioInitialized) {
+        audioElement = new Audio(`sounds/${CONFIG.CHIME_FILE}`);
         audioElement.load();
+        
+        // 音声再生完了時のイベントリスナーを再設定
+        audioElement.addEventListener('ended', () => {
+            state.isVolumeTestPlaying = false;
+            volumeBtn.textContent = '🔊 音量確認';
+        });
     }
     
     // タイマーが停止中の場合、残り時間を更新

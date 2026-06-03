@@ -486,8 +486,14 @@ function updatePeriodDisplay() {
  * 状態（FOCUS/BREAK/READY）を更新する
  */
 function updateStateDisplay() {
+    // タスクがundefinedまたはnullの場合のガード句
+    if (!tasks || !Array.isArray(tasks)) {
+        stateLabel.textContent = state.currentState;
+        return;
+    }
+    
     // タスクがアクティブかどうかを判定
-    const hasActiveTasks = tasks.length > 0 && state.selectedTasks.size > 0;
+    const hasActiveTasks = tasks.length > 0 && selectedTasks && selectedTasks.size > 0;
     
     if (state.currentState === 'FOCUS') {
         if (hasActiveTasks && selectedTaskId) {

@@ -83,49 +83,45 @@
     <div id="settings-modal" class="modal">
         <div class="modal-content">
             <div class="modal-header">
-                <h2>設定</h2>
+                <h2>SETTING</h2>
                 <button id="close-modal-btn" class="close-btn">×</button>
             </div>
             <div class="modal-body">
-                <!-- プリセット選択 -->
+                <!-- タイマー設定 -->
                 <div class="settings-section">
-                    <h3>プリセット</h3>
-                    <div class="preset-options">
-                        <label class="preset-option">
-                            <input type="radio" name="preset" value="A" checked>
-                            <span class="preset-label">A: 45分 / 10分</span>
-                        </label>
-                        <label class="preset-option">
-                            <input type="radio" name="preset" value="B">
-                            <span class="preset-label">B: 90分 / 15分</span>
-                        </label>
-                        <label class="preset-option">
-                            <input type="radio" name="preset" value="C">
-                            <span class="preset-label">C: 20分 / 5分</span>
-                        </label>
+                    <h3>Timer Settings</h3>
+                    <div class="timer-settings">
+                        <div class="input-group">
+                            <label for="pomodoro-time">Pomodoro (minutes)</label>
+                            <input type="number" id="pomodoro-time" value="45" min="1" max="120">
+                        </div>
+                        <div class="input-group">
+                            <label for="short-break-time">Short Break (minutes)</label>
+                            <input type="number" id="short-break-time" value="10" min="1" max="60">
+                        </div>
                     </div>
                 </div>
 
-                <!-- カスタム設定（プレミアム機能） -->
-                <div class="settings-section premium-section">
-                    <div class="premium-overlay">
-                        <span class="premium-badge">Premium</span>
-                    </div>
-                    <h3>カスタム設定</h3>
-                    <div class="custom-settings">
-                        <div class="input-group">
-                            <label for="focus-time">FOCUS時間（分）</label>
-                            <input type="number" id="focus-time" value="45" disabled>
+                <!-- 自動開始設定 -->
+                <div class="settings-section">
+                    <h3>Auto Start</h3>
+                    <div class="toggle-settings">
+                        <div class="toggle-item">
+                            <label for="auto-start-breaks">Auto Start Breaks</label>
+                            <label class="toggle-switch">
+                                <input type="checkbox" id="auto-start-breaks">
+                                <span class="toggle-slider"></span>
+                            </label>
                         </div>
-                        <div class="input-group">
-                            <label for="break-time">BREAK時間（分）</label>
-                            <input type="number" id="break-time" value="10" disabled>
+                        <div class="toggle-item">
+                            <label for="auto-start-pomodoros">Auto Start Pomodoros</label>
+                            <label class="toggle-switch">
+                                <input type="checkbox" id="auto-start-pomodoros">
+                                <span class="toggle-slider"></span>
+                            </label>
                         </div>
                     </div>
                 </div>
-            </div>
-            <div class="modal-footer">
-                <button id="save-settings-btn" class="btn btn-primary">保存して閉じる</button>
             </div>
         </div>
     </div>

@@ -1,17 +1,19 @@
 // ================================
 // 設定定数（保守性のため独立）
 // ================================
-const CONFIG = {
-    FOCUS_TIME: 45 * 60,      // FOCUS時間：45分（秒単位）
-    BREAK_TIME: 10 * 60,      // BREAK時間：10分（秒単位）
-    CHIME_FILE: 'chime.mp3',  // チャイム音声ファイル
+const DEFAULT_CONFIG = {
+    pomodoroTime: 45,  // 45分
+    shortBreakTime: 10,  // 10分
+    autoStartBreaks: false,
+    autoStartPomodoros: false,
 };
 
-// プリセット設定
-const PRESETS = {
-    A: { focus: 45, break: 10 },  // 45分 / 10分
-    B: { focus: 90, break: 15 },  // 90分 / 15分
-    C: { focus: 20, break: 5 },   // 20分 / 5分
+let CONFIG = {
+    FOCUS_TIME: 45 * 60,      // FOCUS時間：45分（秒単位）
+    BREAK_TIME: 10 * 60,      // BREAK時間：10分（秒単位）
+    autoStartBreaks: false,
+    autoStartPomodoros: false,
+    CHIME_FILE: 'chime.mp3',  // チャイム音声ファイル
 };
 
 // ================================
@@ -41,8 +43,73 @@ const signinBtn = document.getElementById('signin-btn');
 const menuBtn = document.getElementById('menu-btn');
 const settingsModal = document.getElementById('settings-modal');
 const closeModalBtn = document.getElementById('close-modal-btn');
-const saveSettingsBtn = document.getElementById('save-settings-btn');
-const presetInputs = document.querySelectorAll('input[name="preset"]');
+const pomodoroTimeInput = document.getElementById('pomodoro-time');
+const shortBreakTimeInput = document.getElementById('short-break-time');
+const autoStartBreaksInput = document.getElementById('auto-start-breaks');
+const autoStartPomodorosInput = document.getElementById('auto-start-pomodoros');
+
+// ================================
+// 設定の読み込み・保存
+// ================================
+
+/**
+ * localStorageから設定を読み込む
+ */
+function loadSettings() {
+    const savedSettings = localStorage.getItem('focusTimerSettings');
+    if (savedSettings) {
+        const settings = JSON.parse(savedSettings);
+        CONFIG.FOCUS_TIME = settings.pomodoroTime * 60;
+        CONFIG.BREAK_TIME = settings.shortBreakTime * 60;
+        CONFIG.autoStartBreaks = settings.autoStartBreaks;
+        CONFIG.autoStartPomodoros = settings.autoStartPomodoros;
+        
+        // 入力欄に値を反映
+        pomodoroTimeInput.value = settings.pomodoroTime;
+        shortBreakTimeInput.value = settings.shortBreakTime;
+        autoStartBreaksInput.checked = settings.autoStartBreaks;
+        autoStartPomodorosInput.checked = settings.autoStartPomodoros;
+    } else {
+        // デフォルト値を入力欄に反映
+        pomodoroTimeInput.value = DEFAULT_CONFIG.pomodoroTime;
+        shortBreakTimeInput.value = DEFAULT_CONFIG.shortBreakTime;
+        autoStartBreaksInput.checked = DEFAULT_CONFIG.autoStartBreaks;
+        autoStartPomodorosInput.checked = DEFAULT_CONFIG.autoStartPomodoros;
+    }
+}
+
+/**
+ * 設定をlocalStorageに保存する
+ */
+function saveSettings() {
+    const settings = {
+        pomodoroTime: parseInt(pomodoroTimeInput.value),
+        shortBreakTime: parseInt(shortBreakTimeInput.value),
+        autoStartBreaks: autoStartBreaksInput.checked,
+        autoStartPomodoros: autoStartPomodorosInput.checked,
+    };
+    
+    localStorage.setItem('focusTimerSettings', JSON.stringify(settings));
+    
+    // CONFIGを更新
+    CONFIG.FOCUS_TIME = settings.pomodoroTime * 60;
+    CONFIG.BREAK_TIME = settings.shortBreakTime * 60;
+    CONFIG.autoStartBreaks = settings.autoStartBreaks;
+    CONFIG.autoStartPomodoros = settings.autoStartPomodoros;
+    
+    // タイマーが停止中の場合、残り時間を更新
+    if (!state.isRunning && state.currentState === 'READY') {
+        state.remainingTime = CONFIG.FOCUS_TIME;
+        updateTimerDisplay();
+    }
+}
+
+/**
+ * 入力値の変更時に設定を保存する
+ */
+function handleSettingChange() {
+    saveSettings();
+}
 
 // ================================
 // 音声管理
@@ -229,21 +296,32 @@ function handleTimerComplete() {
         // FOCUS終了 → BREAK開始
         state.currentState = 'BREAK';
         state.remainingTime = CONFIG.BREAK_TIME;
+        
+        // Auto Start Breaksが有効な場合、自動的に開始
+        if (CONFIG.autoStartBreaks) {
+            startTimer();
+        } else {
+            state.isRunning = false;
+        }
     } else if (state.currentState === 'BREAK') {
         // BREAK終了 → 次のFOCUS開始
         state.currentState = 'FOCUS';
         state.currentPeriod++;
         state.remainingTime = CONFIG.FOCUS_TIME;
         updatePeriodDisplay();
+        
+        // Auto Start Pomodorosが有効な場合、自動的に開始
+        if (CONFIG.autoStartPomodoros) {
+            startTimer();
+        } else {
+            state.isRunning = false;
+        }
     }
     
     // UI更新
     updateStateDisplay();
     updateTimerDisplay();
     updatePageTitle();
-    
-    // 自動的に次のセッションを開始
-    startTimer();
 }
 
 // ================================
@@ -302,47 +380,11 @@ function closeSettingsModal() {
     settingsModal.classList.remove('active');
 }
 
-/**
- * 選択されたプリセットに基づいてタイマー設定を更新する
- */
-function applyPreset(presetValue) {
-    const preset = PRESETS[presetValue];
-    if (!preset) return;
-    
-    // CONFIG値を更新
-    CONFIG.FOCUS_TIME = preset.focus * 60;
-    CONFIG.BREAK_TIME = preset.break * 60;
-    
-    // READY状態の場合は残り時間も更新
-    if (state.currentState === 'READY') {
-        state.remainingTime = CONFIG.FOCUS_TIME;
-        updateTimerDisplay();
-        updatePageTitle();
-    }
-}
-
-/**
- * 設定を保存してモーダルを閉じる
- */
-function saveSettings() {
-    // 選択されたプリセットを取得
-    const selectedPreset = document.querySelector('input[name="preset"]:checked');
-    if (selectedPreset) {
-        applyPreset(selectedPreset.value);
-    }
-    
-    // モーダルを閉じる
-    closeSettingsModal();
-}
-
 // 設定ボタンクリック
 settingsBtn.addEventListener('click', openSettingsModal);
 
 // 閉じるボタンクリック
 closeModalBtn.addEventListener('click', closeSettingsModal);
-
-// 保存して閉じるボタンクリック
-saveSettingsBtn.addEventListener('click', saveSettings);
 
 // モーダル外クリックで閉じる
 settingsModal.addEventListener('click', (e) => {
@@ -350,6 +392,12 @@ settingsModal.addEventListener('click', (e) => {
         closeSettingsModal();
     }
 });
+
+// 設定入力欄の変更イベント
+pomodoroTimeInput.addEventListener('input', handleSettingChange);
+shortBreakTimeInput.addEventListener('input', handleSettingChange);
+autoStartBreaksInput.addEventListener('change', handleSettingChange);
+autoStartPomodorosInput.addEventListener('change', handleSettingChange);
 
 // Sign Inボタンクリック（プレースホルダー）
 signinBtn.addEventListener('click', () => {
@@ -364,6 +412,9 @@ menuBtn.addEventListener('click', () => {
 // ================================
 // 初期化
 // ================================
+
+// 設定を読み込む
+loadSettings();
 
 // アプリ起動時の初期表示
 updateAllDisplays();

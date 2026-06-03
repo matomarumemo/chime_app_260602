@@ -499,8 +499,7 @@ function updateStateDisplay() {
         if (hasActiveTasks && selectedTaskId) {
             const task = tasks.find(t => t.id === selectedTaskId);
             if (task) {
-                const sessionInfo = `${task.completedSessions + 1}/${task.targetSessions}`;
-                stateLabel.textContent = `${task.name} (${sessionInfo})`;
+                stateLabel.textContent = task.name;
                 return;
             }
         }
@@ -509,9 +508,9 @@ function updateStateDisplay() {
         if (hasActiveTasks) {
             const nextTask = getNextTask();
             if (nextTask) {
-                stateLabel.textContent = `Break - Next: ${nextTask.name}`;
+                stateLabel.textContent = `Next Task: ${nextTask.name}`;
             } else {
-                stateLabel.textContent = 'All Completed!';
+                stateLabel.textContent = 'BREAK';
             }
         } else {
             stateLabel.textContent = 'BREAK';

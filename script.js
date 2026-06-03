@@ -425,8 +425,6 @@ let isPreviewPlaying = false;
  * ブラウザの自動再生制限を回避するため、ユーザー操作時に呼び出す
  */
 function initializeAudio() {
-    if (state.audioInitialized) return;
-    
     audioElement = new Audio(CONFIG.CHIME_FILE);
     audioElement.load();
     

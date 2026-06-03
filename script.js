@@ -14,6 +14,7 @@ let CONFIG = {
     autoStartBreaks: false,
     autoStartPomodoros: false,
     CHIME_FILE: 'chime.mp3',  // チャイム音声ファイル
+    volume: 50,               // 音量：0-100
 };
 
 // ================================
@@ -47,6 +48,8 @@ const pomodoroTimeInput = document.getElementById('pomodoro-time');
 const shortBreakTimeInput = document.getElementById('short-break-time');
 const autoStartBreaksInput = document.getElementById('auto-start-breaks');
 const autoStartPomodorosInput = document.getElementById('auto-start-pomodoros');
+const volumeInput = document.getElementById('volume');
+const volumeValue = document.getElementById('volume-value');
 
 // タスク管理関連のDOM要素
 const addTaskBtn = document.getElementById('add-task-btn');
@@ -287,18 +290,23 @@ function loadSettings() {
         CONFIG.BREAK_TIME = settings.shortBreakTime * 60;
         CONFIG.autoStartBreaks = settings.autoStartBreaks;
         CONFIG.autoStartPomodoros = settings.autoStartPomodoros;
+        CONFIG.volume = settings.volume || 50;
         
         // 入力欄に値を反映
         pomodoroTimeInput.value = settings.pomodoroTime;
         shortBreakTimeInput.value = settings.shortBreakTime;
         autoStartBreaksInput.checked = settings.autoStartBreaks;
         autoStartPomodorosInput.checked = settings.autoStartPomodoros;
+        volumeInput.value = CONFIG.volume;
+        volumeValue.textContent = CONFIG.volume + '%';
     } else {
         // デフォルト値を入力欄に反映
         pomodoroTimeInput.value = DEFAULT_CONFIG.pomodoroTime;
         shortBreakTimeInput.value = DEFAULT_CONFIG.shortBreakTime;
         autoStartBreaksInput.checked = DEFAULT_CONFIG.autoStartBreaks;
         autoStartPomodorosInput.checked = DEFAULT_CONFIG.autoStartPomodoros;
+        volumeInput.value = CONFIG.volume;
+        volumeValue.textContent = CONFIG.volume + '%';
     }
 }
 
@@ -311,6 +319,7 @@ function saveSettings() {
         shortBreakTime: parseInt(shortBreakTimeInput.value),
         autoStartBreaks: autoStartBreaksInput.checked,
         autoStartPomodoros: autoStartPomodorosInput.checked,
+        volume: parseInt(volumeInput.value),
     };
     
     localStorage.setItem('focusTimerSettings', JSON.stringify(settings));
@@ -320,6 +329,7 @@ function saveSettings() {
     CONFIG.BREAK_TIME = settings.shortBreakTime * 60;
     CONFIG.autoStartBreaks = settings.autoStartBreaks;
     CONFIG.autoStartPomodoros = settings.autoStartPomodoros;
+    CONFIG.volume = settings.volume;
     
     // タイマーが停止中の場合、残り時間を更新
     if (!state.isRunning && state.currentState === 'READY') {
@@ -349,6 +359,7 @@ function initializeAudio() {
     
     audioElement = new Audio(CONFIG.CHIME_FILE);
     audioElement.load();
+    audioElement.volume = CONFIG.volume / 100;
     
     // 音声再生完了時のイベントリスナーを設定
     audioElement.addEventListener('ended', () => {
@@ -751,6 +762,20 @@ pomodoroTimeInput.addEventListener('input', handleSettingChange);
 shortBreakTimeInput.addEventListener('input', handleSettingChange);
 autoStartBreaksInput.addEventListener('change', handleSettingChange);
 autoStartPomodorosInput.addEventListener('change', handleSettingChange);
+
+// 音量スライダーの変更イベント
+volumeInput.addEventListener('input', () => {
+    const volume = parseInt(volumeInput.value);
+    volumeValue.textContent = volume + '%';
+    CONFIG.volume = volume;
+    
+    // 音声要素が初期化されている場合は音量を更新
+    if (audioElement && state.audioInitialized) {
+        audioElement.volume = volume / 100;
+    }
+    
+    saveSettings();
+});
 
 // ================================
 // タスク管理イベントリスナー

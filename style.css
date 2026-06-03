@@ -478,10 +478,23 @@ body {
 .modal-footer {
     padding: 24px;
     border-top: 1px solid #2a2a2b;
+    display: flex;
+    gap: 12px;
 }
 
 .modal-footer .btn {
-    width: 100%;
+    flex: 1;
+}
+
+.modal-footer .btn-secondary {
+    background-color: transparent;
+    border: 1px solid #ff6b6b;
+    color: #ff6b6b;
+}
+
+.modal-footer .btn-secondary:hover {
+    background-color: #ff6b6b;
+    color: #ffffff;
 }
 
 /* 設定セクション */

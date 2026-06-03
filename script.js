@@ -64,7 +64,6 @@ let state = {
     currentPeriod: 1,                  // 現在のセッション番号
     currentState: 'READY',            // 現在の状態：READY, FOCUS, BREAK
     timerId: null,                     // setIntervalのID
-    isVolumeTestPlaying: false,        // 音量テスト再生中フラグ
 };
 
 // ================================
@@ -75,7 +74,6 @@ const periodLabel = document.getElementById('period-label');
 const stateLabel = document.getElementById('state-label');
 const startBtn = document.getElementById('start-btn');
 const resetBtn = document.getElementById('reset-btn');
-const volumeBtn = document.getElementById('volume-btn');
 const settingsBtn = document.getElementById('settings-btn');
 const signinBtn = document.getElementById('signin-btn');
 const menuBtn = document.getElementById('menu-btn');
@@ -746,20 +744,6 @@ startBtn.addEventListener('click', () => {
 
 // RESETボタン
 resetBtn.addEventListener('click', resetTimer);
-
-// 音量確認ボタン
-volumeBtn.addEventListener('click', () => {
-    if (state.isVolumeTestPlaying) {
-        // 再生中の場合は停止
-        state.isVolumeTestPlaying = false;
-        volumeBtn.textContent = '🔊 音量確認';
-    } else {
-        // 停止中の場合は再生
-        playAlarmSound(CONFIG.CHIME_FILE);
-        state.isVolumeTestPlaying = true;
-        volumeBtn.textContent = '🔊 再生停止';
-    }
-});
 
 // ================================
 // 設定モーダル制御

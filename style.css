@@ -389,34 +389,6 @@ body {
     color: #666666;
 }
 
-/* 音量確認ボタンエリア */
-.volume-check {
-    margin-bottom: 20px;
-    flex-shrink: 0;
-}
-
-.btn-volume {
-    padding: 12px 24px;
-    font-size: 0.9rem;
-    font-weight: 500;
-    background-color: transparent;
-    color: #666666;
-    border: 1px solid #444444;
-    border-radius: 6px;
-    cursor: pointer;
-    transition: all 0.3s ease;
-}
-
-.btn-volume:hover {
-    border-color: #888888;
-    color: #888888;
-    background-color: #1a1a1b;
-}
-
-.btn-volume:active {
-    transform: scale(0.98);
-}
-
 /* フッター */
 .footer {
     margin-top: 20px;
@@ -708,12 +680,6 @@ body {
         min-height: 56px;
     }
     
-    .btn-volume {
-        padding: 14px 28px;
-        font-size: 1rem;
-        min-height: 48px;
-    }
-    
     .modal-content {
         width: 95%;
     }
@@ -760,13 +726,6 @@ body {
         min-height: 64px;
     }
     
-    .btn-volume {
-        width: 100%;
-        padding: 16px 24px;
-        font-size: 1rem;
-        min-height: 52px;
-    }
-    
     .modal-content {
         width: 95%;
         max-height: 95vh;
@@ -811,10 +770,6 @@ body {
         margin-top: 15px;
     }
     
-    .volume-check {
-        margin-bottom: 15px;
-    }
-    
     .footer {
         margin-top: 15px;
     }
@@ -839,10 +794,6 @@ body {
     
     #ad-space {
         margin-top: 10px;
-    }
-    
-    .volume-check {
-        margin-bottom: 10px;
     }
     
     .footer {

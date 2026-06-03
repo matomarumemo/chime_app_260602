@@ -132,19 +132,15 @@ function updateAllDisplays() {
 
 /**
  * ブラウザタブのタイトルを更新する
- * タイマー動作中は「残り時間 [分:秒] - FOCUS/BREAK」を表示
+ * タイマーの状態に応じてタイトルを変更
  */
 function updatePageTitle() {
-    const minutes = Math.floor(state.remainingTime / 60);
-    const seconds = state.remainingTime % 60;
-    const formattedTime = 
-        String(minutes).padStart(2, '0') + ':' + 
-        String(seconds).padStart(2, '0');
-    
     if (state.currentState === 'READY') {
-        document.title = 'Chime Timer';
-    } else {
-        document.title = `${formattedTime} - ${state.currentState}`;
+        document.title = 'Focus Timer';
+    } else if (state.currentState === 'FOCUS') {
+        document.title = state.isRunning ? 'Focus' : 'Pause';
+    } else if (state.currentState === 'BREAK') {
+        document.title = state.isRunning ? 'Break' : 'Pause';
     }
 }
 

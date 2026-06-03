@@ -17,21 +17,42 @@ let CONFIG = {
     CHIME_FILE: 'School.mp3',  // チャイム音声ファイル
 };
 
-// 利用可能なアラーム音
-const AVAILABLE_SOUNDS = [
+// 利用可能なアラーム音（Source of Truth）
+const availableSounds = [
     'School.mp3',
     'ShortBell1.mp3',
     'ShortBell2.mp3',
     'Uguisu.mp3'
 ];
 
+// デフォルトのアラーム音
+const DEFAULT_ALARM_SOUND = 'School.mp3';
+
 /**
- * アラーム音のパスを取得する
+ * アラーム音を再生する（統一された再生関数）
  * @param {string} fileName - 音声ファイル名
- * @returns {string} 音声ファイルのパス
  */
-function getAlarmSoundPath(fileName) {
-    return `sounds/${fileName}`;
+function playAlarmSound(fileName) {
+    const path = 'sounds/' + fileName;
+    
+    try {
+        const audio = new Audio(path);
+        audio.play().catch(error => {
+            console.error('音声再生エラー:', error);
+            // エラー時はデフォルト音を再生
+            const fallbackAudio = new Audio('sounds/' + DEFAULT_ALARM_SOUND);
+            fallbackAudio.play().catch(e => console.error('フォールバック音声再生エラー:', e));
+        });
+    } catch (error) {
+        console.error('Audioオブジェクト生成エラー:', error);
+        // エラー時はデフォルト音を再生
+        try {
+            const fallbackAudio = new Audio('sounds/' + DEFAULT_ALARM_SOUND);
+            fallbackAudio.play().catch(e => console.error('フォールバック音声再生エラー:', e));
+        } catch (fallbackError) {
+            console.error('フォールバックAudioオブジェクト生成エラー:', fallbackError);
+        }
+    }
 }
 
 // ================================
@@ -43,7 +64,6 @@ let state = {
     currentPeriod: 1,                  // 現在のセッション番号
     currentState: 'READY',            // 現在の状態：READY, FOCUS, BREAK
     timerId: null,                     // setIntervalのID
-    audioInitialized: false,           // 音声コンテキスト初期化フラグ
     isVolumeTestPlaying: false,        // 音量テスト再生中フラグ
 };
 
@@ -311,12 +331,12 @@ function loadSettings() {
         CONFIG.autoStartPomodoros = settings.autoStartPomodoros;
         
         // アラーム音が存在するか確認し、存在しない場合はデフォルトに戻す
-        if (settings.alarmSound && AVAILABLE_SOUNDS.includes(settings.alarmSound)) {
+        if (settings.alarmSound && availableSounds.includes(settings.alarmSound)) {
             CONFIG.CHIME_FILE = settings.alarmSound;
         } else {
-            CONFIG.CHIME_FILE = DEFAULT_CONFIG.alarmSound;
+            CONFIG.CHIME_FILE = DEFAULT_ALARM_SOUND;
             // 保存済み設定を更新
-            settings.alarmSound = DEFAULT_CONFIG.alarmSound;
+            settings.alarmSound = DEFAULT_ALARM_SOUND;
             localStorage.setItem('focusTimerSettings', JSON.stringify(settings));
         }
         
@@ -332,8 +352,8 @@ function loadSettings() {
         shortBreakTimeInput.value = DEFAULT_CONFIG.shortBreakTime;
         autoStartBreaksInput.checked = DEFAULT_CONFIG.autoStartBreaks;
         autoStartPomodorosInput.checked = DEFAULT_CONFIG.autoStartPomodoros;
-        alarmSoundSelect.value = DEFAULT_CONFIG.alarmSound;
-        CONFIG.CHIME_FILE = DEFAULT_CONFIG.alarmSound;
+        alarmSoundSelect.value = DEFAULT_ALARM_SOUND;
+        CONFIG.CHIME_FILE = DEFAULT_ALARM_SOUND;
     }
     
     // アラーム音選択肢をロード
@@ -361,18 +381,6 @@ function saveSettings() {
     CONFIG.autoStartPomodoros = settings.autoStartPomodoros;
     CONFIG.CHIME_FILE = settings.alarmSound;
     
-    // アラーム音が変更された場合、音声要素を再初期化
-    if (state.audioInitialized) {
-        audioElement = new Audio(getAlarmSoundPath(CONFIG.CHIME_FILE));
-        audioElement.load();
-        
-        // 音声再生完了時のイベントリスナーを再設定
-        audioElement.addEventListener('ended', () => {
-            state.isVolumeTestPlaying = false;
-            volumeBtn.textContent = '🔊 音量確認';
-        });
-    }
-    
     // タイマーが停止中の場合、残り時間を更新
     if (!state.isRunning && state.currentState === 'READY') {
         state.remainingTime = CONFIG.FOCUS_TIME;
@@ -393,7 +401,7 @@ function handleSettingChange() {
 function loadSoundOptions() {
     alarmSoundSelect.innerHTML = '';
     
-    AVAILABLE_SOUNDS.forEach(sound => {
+    availableSounds.forEach(sound => {
         const option = document.createElement('option');
         option.value = sound;
         // ファイル名から拡張子を除いて表示名にする
@@ -424,7 +432,7 @@ function previewSound() {
             previewAudioElement.currentTime = 0;
         }
         
-        previewAudioElement = new Audio(getAlarmSoundPath(selectedSound));
+        previewAudioElement = new Audio('sounds/' + selectedSound);
         previewAudioElement.play();
         isPreviewPlaying = true;
         playIcon.style.display = 'none';
@@ -442,37 +450,14 @@ function previewSound() {
 // ================================
 // 音声管理
 // ================================
-let audioElement = null;
 let previewAudioElement = null;
 let isPreviewPlaying = false;
-
-/**
- * 音声コンテキストを初期化する
- * ブラウザの自動再生制限を回避するため、ユーザー操作時に呼び出す
- */
-function initializeAudio() {
-    audioElement = new Audio(getAlarmSoundPath(CONFIG.CHIME_FILE));
-    audioElement.load();
-    
-    // 音声再生完了時のイベントリスナーを設定
-    audioElement.addEventListener('ended', () => {
-        state.isVolumeTestPlaying = false;
-        volumeBtn.textContent = '🔊 音量確認';
-    });
-    
-    state.audioInitialized = true;
-}
 
 /**
  * チャイム音声を再生する
  */
 function playChime() {
-    if (audioElement && state.audioInitialized) {
-        audioElement.currentTime = 0;
-        audioElement.play().catch(error => {
-            console.error('音声再生エラー:', error);
-        });
-    }
+    playAlarmSound(CONFIG.CHIME_FILE);
 }
 
 // ================================
@@ -572,9 +557,6 @@ function updatePageTitle() {
  * タイマーを開始する
  */
 function startTimer() {
-    // 音声コンテキストの初期化（最初のSTART時のみ）
-    initializeAudio();
-    
     // 既に実行中の場合は何もしない
     if (state.isRunning) return;
     
@@ -767,21 +749,13 @@ resetBtn.addEventListener('click', resetTimer);
 
 // 音量確認ボタン
 volumeBtn.addEventListener('click', () => {
-    // 音声コンテキストの初期化
-    initializeAudio();
-    
     if (state.isVolumeTestPlaying) {
         // 再生中の場合は停止
-        audioElement.pause();
-        audioElement.currentTime = 0;
         state.isVolumeTestPlaying = false;
         volumeBtn.textContent = '🔊 音量確認';
     } else {
         // 停止中の場合は再生
-        audioElement.currentTime = 0;
-        audioElement.play().catch(error => {
-            console.error('音声再生エラー:', error);
-        });
+        playAlarmSound(CONFIG.CHIME_FILE);
         state.isVolumeTestPlaying = true;
         volumeBtn.textContent = '🔊 再生停止';
     }

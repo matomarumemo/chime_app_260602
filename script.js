@@ -37,6 +37,8 @@ const startBtn = document.getElementById('start-btn');
 const resetBtn = document.getElementById('reset-btn');
 const volumeBtn = document.getElementById('volume-btn');
 const settingsBtn = document.getElementById('settings-btn');
+const signinBtn = document.getElementById('signin-btn');
+const menuBtn = document.getElementById('menu-btn');
 const settingsModal = document.getElementById('settings-modal');
 const closeModalBtn = document.getElementById('close-modal-btn');
 const saveSettingsBtn = document.getElementById('save-settings-btn');
@@ -345,6 +347,16 @@ settingsModal.addEventListener('click', (e) => {
     if (e.target === settingsModal) {
         closeSettingsModal();
     }
+});
+
+// Sign Inボタンクリック（プレースホルダー）
+signinBtn.addEventListener('click', () => {
+    console.log('Sign In clicked - functionality to be implemented');
+});
+
+// Menuボタンクリック（プレースホルダー）
+menuBtn.addEventListener('click', () => {
+    console.log('Menu clicked - functionality to be implemented');
 });
 
 // ================================

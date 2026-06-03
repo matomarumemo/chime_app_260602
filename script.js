@@ -6,6 +6,7 @@ const DEFAULT_CONFIG = {
     shortBreakTime: 10,  // 10分
     autoStartBreaks: false,
     autoStartPomodoros: false,
+    alarmSound: 'chime.mp3',  // デフォルトのアラーム音
 };
 
 let CONFIG = {
@@ -15,6 +16,18 @@ let CONFIG = {
     autoStartPomodoros: false,
     CHIME_FILE: 'chime.mp3',  // チャイム音声ファイル
 };
+
+// 利用可能なアラーム音
+const AVAILABLE_SOUNDS = [
+    'Bush_Warbler.mp3',
+    'Glocken.mp3',
+    'Phrase.mp3',
+    'Smartphone.mp3',
+    'Winning.mp3',
+    'chime.mp3',
+    'pin.mp3',
+    'pinpon.mp3'
+];
 
 // ================================
 // アプリケーション状態管理
@@ -47,6 +60,8 @@ const pomodoroTimeInput = document.getElementById('pomodoro-time');
 const shortBreakTimeInput = document.getElementById('short-break-time');
 const autoStartBreaksInput = document.getElementById('auto-start-breaks');
 const autoStartPomodorosInput = document.getElementById('auto-start-pomodoros');
+const alarmSoundSelect = document.getElementById('alarm-sound');
+const previewSoundBtn = document.getElementById('preview-sound-btn');
 
 // タスク管理関連のDOM要素
 const addTaskBtn = document.getElementById('add-task-btn');
@@ -287,19 +302,26 @@ function loadSettings() {
         CONFIG.BREAK_TIME = settings.shortBreakTime * 60;
         CONFIG.autoStartBreaks = settings.autoStartBreaks;
         CONFIG.autoStartPomodoros = settings.autoStartPomodoros;
+        CONFIG.CHIME_FILE = settings.alarmSound || DEFAULT_CONFIG.alarmSound;
         
         // 入力欄に値を反映
         pomodoroTimeInput.value = settings.pomodoroTime;
         shortBreakTimeInput.value = settings.shortBreakTime;
         autoStartBreaksInput.checked = settings.autoStartBreaks;
         autoStartPomodorosInput.checked = settings.autoStartPomodoros;
+        alarmSoundSelect.value = settings.alarmSound || DEFAULT_CONFIG.alarmSound;
     } else {
         // デフォルト値を入力欄に反映
         pomodoroTimeInput.value = DEFAULT_CONFIG.pomodoroTime;
         shortBreakTimeInput.value = DEFAULT_CONFIG.shortBreakTime;
         autoStartBreaksInput.checked = DEFAULT_CONFIG.autoStartBreaks;
         autoStartPomodorosInput.checked = DEFAULT_CONFIG.autoStartPomodoros;
+        alarmSoundSelect.value = DEFAULT_CONFIG.alarmSound;
+        CONFIG.CHIME_FILE = DEFAULT_CONFIG.alarmSound;
     }
+    
+    // アラーム音選択肢をロード
+    loadSoundOptions();
 }
 
 /**
@@ -311,6 +333,7 @@ function saveSettings() {
         shortBreakTime: parseInt(shortBreakTimeInput.value),
         autoStartBreaks: autoStartBreaksInput.checked,
         autoStartPomodoros: autoStartPomodorosInput.checked,
+        alarmSound: alarmSoundSelect.value
     };
     
     localStorage.setItem('focusTimerSettings', JSON.stringify(settings));
@@ -320,6 +343,7 @@ function saveSettings() {
     CONFIG.BREAK_TIME = settings.shortBreakTime * 60;
     CONFIG.autoStartBreaks = settings.autoStartBreaks;
     CONFIG.autoStartPomodoros = settings.autoStartPomodoros;
+    CONFIG.CHIME_FILE = settings.alarmSound;
     
     // タイマーが停止中の場合、残り時間を更新
     if (!state.isRunning && state.currentState === 'READY') {
@@ -333,6 +357,33 @@ function saveSettings() {
  */
 function handleSettingChange() {
     saveSettings();
+}
+
+/**
+ * アラーム音選択肢をロードする
+ */
+function loadSoundOptions() {
+    alarmSoundSelect.innerHTML = '';
+    
+    AVAILABLE_SOUNDS.forEach(sound => {
+        const option = document.createElement('option');
+        option.value = sound;
+        // ファイル名から拡張子を除いて表示名にする
+        const displayName = sound.replace('.mp3', '');
+        option.textContent = displayName;
+        alarmSoundSelect.appendChild(option);
+    });
+}
+
+/**
+ * アラーム音を試聴する
+ */
+function previewSound() {
+    const selectedSound = alarmSoundSelect.value;
+    if (!selectedSound) return;
+    
+    const previewAudio = new Audio(`sounds/${selectedSound}`);
+    previewAudio.play();
 }
 
 // ================================
@@ -719,6 +770,8 @@ pomodoroTimeInput.addEventListener('input', handleSettingChange);
 shortBreakTimeInput.addEventListener('input', handleSettingChange);
 autoStartBreaksInput.addEventListener('change', handleSettingChange);
 autoStartPomodorosInput.addEventListener('change', handleSettingChange);
+alarmSoundSelect.addEventListener('change', handleSettingChange);
+previewSoundBtn.addEventListener('click', previewSound);
 
 // ================================
 // タスク管理イベントリスナー

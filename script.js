@@ -779,12 +779,39 @@ volumeInput.addEventListener('input', () => {
 });
 
 // 音量プレビューボタンのクリックイベント
+let volumePreviewAudio = null;
+let isVolumePreviewPlaying = false;
+
 volumePreviewBtn.addEventListener('click', () => {
-    const testAudio = new Audio(CONFIG.CHIME_FILE);
-    testAudio.volume = CONFIG.volume / 100;
-    testAudio.play().catch(error => {
-        console.error('音量プレビュー再生エラー:', error);
-    });
+    if (isVolumePreviewPlaying && volumePreviewAudio) {
+        // 再生中の場合は停止
+        volumePreviewAudio.pause();
+        volumePreviewAudio.currentTime = 0;
+        isVolumePreviewPlaying = false;
+        volumePreviewBtn.textContent = '🔊';
+    } else {
+        // 停止中の場合は再生
+        if (volumePreviewAudio) {
+            volumePreviewAudio.pause();
+            volumePreviewAudio.currentTime = 0;
+        }
+        
+        volumePreviewAudio = new Audio(CONFIG.CHIME_FILE);
+        volumePreviewAudio.volume = CONFIG.volume / 100;
+        volumePreviewAudio.play().catch(error => {
+            console.error('音量プレビュー再生エラー:', error);
+            isVolumePreviewPlaying = false;
+            volumePreviewBtn.textContent = '🔊';
+        });
+        isVolumePreviewPlaying = true;
+        volumePreviewBtn.textContent = '🔇';
+        
+        // 再生終了時にボタンをリセット
+        volumePreviewAudio.addEventListener('ended', () => {
+            isVolumePreviewPlaying = false;
+            volumePreviewBtn.textContent = '🔊';
+        }, { once: true });
+    }
 });
 
 // ================================

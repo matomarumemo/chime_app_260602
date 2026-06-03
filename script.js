@@ -62,6 +62,8 @@ const autoStartBreaksInput = document.getElementById('auto-start-breaks');
 const autoStartPomodorosInput = document.getElementById('auto-start-pomodoros');
 const alarmSoundSelect = document.getElementById('alarm-sound');
 const previewSoundBtn = document.getElementById('preview-sound-btn');
+const playIcon = document.getElementById('play-icon');
+const stopIcon = document.getElementById('stop-icon');
 
 // タスク管理関連のDOM要素
 const addTaskBtn = document.getElementById('add-task-btn');
@@ -387,7 +389,8 @@ function previewSound() {
         previewAudioElement.pause();
         previewAudioElement.currentTime = 0;
         isPreviewPlaying = false;
-        previewSoundBtn.textContent = '▶ Preview';
+        playIcon.style.display = 'block';
+        stopIcon.style.display = 'none';
     } else {
         // 未再生の場合は再生開始
         if (previewAudioElement) {
@@ -398,12 +401,14 @@ function previewSound() {
         previewAudioElement = new Audio(`sounds/${selectedSound}`);
         previewAudioElement.play();
         isPreviewPlaying = true;
-        previewSoundBtn.textContent = '⏹ Stop';
+        playIcon.style.display = 'none';
+        stopIcon.style.display = 'block';
         
         // 再生終了時にボタンをリセット
         previewAudioElement.addEventListener('ended', () => {
             isPreviewPlaying = false;
-            previewSoundBtn.textContent = '▶ Preview';
+            playIcon.style.display = 'block';
+            stopIcon.style.display = 'none';
         }, { once: true });
     }
 }

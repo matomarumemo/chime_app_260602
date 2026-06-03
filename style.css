@@ -605,16 +605,18 @@ body {
 }
 
 .preview-btn {
-    padding: 12px 16px;
+    padding: 12px;
     background-color: #222223;
     border: 1px solid #333333;
     border-radius: 6px;
     color: #ffffff;
-    font-size: 0.9rem;
-    font-weight: 500;
     cursor: pointer;
     transition: all 0.3s ease;
-    white-space: nowrap;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 44px;
+    min-height: 44px;
 }
 
 .preview-btn:hover {

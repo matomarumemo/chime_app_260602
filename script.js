@@ -414,7 +414,7 @@ function updateStateDisplay() {
         if (nextTask) {
             stateLabel.textContent = `Break - Next: ${nextTask.name}`;
         } else {
-            stateLabel.textContent = 'Break - Nice work!';
+            stateLabel.textContent = 'All complete!';
         }
     } else {
         stateLabel.textContent = state.currentState;

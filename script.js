@@ -252,17 +252,32 @@ function selectTask(id) {
  * 現在のタスク表示を更新する
  */
 function updateCurrentTaskDisplay() {
-    if (selectedTaskId) {
+    if (state.currentState === 'BREAK') {
+        // BREAKモード時は次のタスクを表示
+        const nextTask = getNextTask();
+        if (nextTask) {
+            currentTaskDisplay.textContent = `Next: ${nextTask.name}`;
+            currentTaskDisplay.classList.add('active', 'break-mode');
+        } else {
+            currentTaskDisplay.textContent = 'Next: All tasks complete!';
+            currentTaskDisplay.classList.add('active', 'break-mode');
+        }
+    } else if (selectedTaskId) {
+        // FOCUSモード時は現在のタスクを表示
         const task = tasks.find(t => t.id === selectedTaskId);
         if (task) {
             const sessionInfo = `${task.completedSessions + 1}/${task.targetSessions}`;
             currentTaskDisplay.textContent = `${task.name} (${sessionInfo})`;
             currentTaskDisplay.classList.add('active');
+            currentTaskDisplay.classList.remove('break-mode');
             return;
         }
     }
-    currentTaskDisplay.textContent = '';
-    currentTaskDisplay.classList.remove('active');
+    
+    if (!selectedTaskId && state.currentState !== 'BREAK') {
+        currentTaskDisplay.textContent = '';
+        currentTaskDisplay.classList.remove('active', 'break-mode');
+    }
 }
 
 /**

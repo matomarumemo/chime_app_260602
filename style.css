@@ -129,6 +129,12 @@ body {
     display: block;
 }
 
+.current-task-display.break-mode {
+    color: #888888;
+    font-weight: 500;
+    font-style: italic;
+}
+
 /* タイマー表示エリア */
 .timer-display {
     margin-bottom: 30px;

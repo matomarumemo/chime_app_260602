@@ -25,6 +25,15 @@ const AVAILABLE_SOUNDS = [
     'Uguisu.mp3'
 ];
 
+/**
+ * アラーム音のパスを取得する
+ * @param {string} fileName - 音声ファイル名
+ * @returns {string} 音声ファイルのパス
+ */
+function getAlarmSoundPath(fileName) {
+    return `sounds/${fileName}`;
+}
+
 // ================================
 // アプリケーション状態管理
 // ================================
@@ -300,14 +309,23 @@ function loadSettings() {
         CONFIG.BREAK_TIME = settings.shortBreakTime * 60;
         CONFIG.autoStartBreaks = settings.autoStartBreaks;
         CONFIG.autoStartPomodoros = settings.autoStartPomodoros;
-        CONFIG.CHIME_FILE = settings.alarmSound || DEFAULT_CONFIG.alarmSound;
+        
+        // アラーム音が存在するか確認し、存在しない場合はデフォルトに戻す
+        if (settings.alarmSound && AVAILABLE_SOUNDS.includes(settings.alarmSound)) {
+            CONFIG.CHIME_FILE = settings.alarmSound;
+        } else {
+            CONFIG.CHIME_FILE = DEFAULT_CONFIG.alarmSound;
+            // 保存済み設定を更新
+            settings.alarmSound = DEFAULT_CONFIG.alarmSound;
+            localStorage.setItem('focusTimerSettings', JSON.stringify(settings));
+        }
         
         // 入力欄に値を反映
         pomodoroTimeInput.value = settings.pomodoroTime;
         shortBreakTimeInput.value = settings.shortBreakTime;
         autoStartBreaksInput.checked = settings.autoStartBreaks;
         autoStartPomodorosInput.checked = settings.autoStartPomodoros;
-        alarmSoundSelect.value = settings.alarmSound || DEFAULT_CONFIG.alarmSound;
+        alarmSoundSelect.value = CONFIG.CHIME_FILE;
     } else {
         // デフォルト値を入力欄に反映
         pomodoroTimeInput.value = DEFAULT_CONFIG.pomodoroTime;
@@ -345,7 +363,7 @@ function saveSettings() {
     
     // アラーム音が変更された場合、音声要素を再初期化
     if (state.audioInitialized) {
-        audioElement = new Audio(`sounds/${CONFIG.CHIME_FILE}`);
+        audioElement = new Audio(getAlarmSoundPath(CONFIG.CHIME_FILE));
         audioElement.load();
         
         // 音声再生完了時のイベントリスナーを再設定
@@ -406,7 +424,7 @@ function previewSound() {
             previewAudioElement.currentTime = 0;
         }
         
-        previewAudioElement = new Audio(`sounds/${selectedSound}`);
+        previewAudioElement = new Audio(getAlarmSoundPath(selectedSound));
         previewAudioElement.play();
         isPreviewPlaying = true;
         playIcon.style.display = 'none';
@@ -433,7 +451,7 @@ let isPreviewPlaying = false;
  * ブラウザの自動再生制限を回避するため、ユーザー操作時に呼び出す
  */
 function initializeAudio() {
-    audioElement = new Audio(`sounds/${CONFIG.CHIME_FILE}`);
+    audioElement = new Audio(getAlarmSoundPath(CONFIG.CHIME_FILE));
     audioElement.load();
     
     // 音声再生完了時のイベントリスナーを設定

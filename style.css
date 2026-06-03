@@ -284,6 +284,18 @@ body {
     background-color: #222223;
     border: 1px solid #333333;
     border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.task-item:hover {
+    background-color: #2a2a2b;
+    border-color: #444444;
+}
+
+.task-item.selected {
+    background-color: #2a2a2b;
+    border-color: #ffffff;
 }
 
 .task-item-left {

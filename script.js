@@ -96,7 +96,7 @@ function renderTasks() {
     
     tasks.forEach(task => {
         const taskItem = document.createElement('div');
-        taskItem.className = 'task-item';
+        taskItem.className = `task-item ${selectedTaskId === task.id ? 'selected' : ''}`;
         taskItem.dataset.taskId = task.id;
         
         const isSelected = selectedTasks.has(task.id);
@@ -121,6 +121,13 @@ function renderTasks() {
         `;
         
         taskList.appendChild(taskItem);
+        
+        // タスク選択イベント（チェックボックス以外のクリック）
+        taskItem.addEventListener('click', (e) => {
+            if (!e.target.closest('.task-checkbox') && !e.target.closest('.task-menu-btn')) {
+                selectTask(task.id);
+            }
+        });
         
         // チェックボックスイベント
         const checkbox = taskItem.querySelector('.task-checkbox');
@@ -248,7 +255,8 @@ function updateCurrentTaskDisplay() {
     if (selectedTaskId) {
         const task = tasks.find(t => t.id === selectedTaskId);
         if (task) {
-            currentTaskDisplay.textContent = `- ${task.name}`;
+            const sessionInfo = `${task.completedSessions + 1}/${task.targetSessions}`;
+            currentTaskDisplay.textContent = `${task.name} (${sessionInfo})`;
             currentTaskDisplay.classList.add('active');
             return;
         }
@@ -409,6 +417,13 @@ function updatePeriodDisplay() {
  * 状態（FOCUS/BREAK/READY）を更新する
  */
 function updateStateDisplay() {
+    if (selectedTaskId && state.currentState === 'FOCUS') {
+        const task = tasks.find(t => t.id === selectedTaskId);
+        if (task) {
+            stateLabel.textContent = task.name;
+            return;
+        }
+    }
     stateLabel.textContent = state.currentState;
 }
 
@@ -541,6 +556,7 @@ function handleTimerComplete() {
                 }
                 saveTasks();
                 renderTasks();
+                updateCurrentTaskDisplay();
             }
         }
         
@@ -557,6 +573,9 @@ function handleTimerComplete() {
         state.remainingTime = CONFIG.FOCUS_TIME;
         updatePeriodDisplay();
         
+        // 次のタスクへ自動遷移
+        moveToNextTask();
+        
         // Auto Start Pomodorosが有効な場合、自動的に開始
         if (CONFIG.autoStartPomodoros) {
             startTimer();
@@ -569,6 +588,33 @@ function handleTimerComplete() {
     updateStateDisplay();
     updateTimerDisplay();
     updatePageTitle();
+}
+
+/**
+ * 次のタスクへ遷移する
+ */
+function moveToNextTask() {
+    if (tasks.length === 0) return;
+    
+    // 現在のタスクが完了している場合、次のタスクを選択
+    if (selectedTaskId) {
+        const currentTask = tasks.find(t => t.id === selectedTaskId);
+        if (currentTask && currentTask.completedSessions >= currentTask.targetSessions) {
+            // 現在のタスクが完了している場合、次の未完了タスクを探す
+            const nextTask = tasks.find(t => t.completedSessions < t.targetSessions);
+            if (nextTask) {
+                selectTask(nextTask.id);
+            } else {
+                // 全タスク完了の場合、最初のタスクに戻る
+                if (tasks.length > 0) {
+                    selectTask(tasks[0].id);
+                }
+            }
+        }
+    } else {
+        // タスクが選択されていない場合、最初のタスクを選択
+        selectTask(tasks[0].id);
+    }
 }
 
 // ================================

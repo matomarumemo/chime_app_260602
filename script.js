@@ -412,9 +412,9 @@ function updateStateDisplay() {
     } else if (state.currentState === 'BREAK') {
         const nextTask = getNextTask();
         if (nextTask) {
-            stateLabel.textContent = `Break - Next: ${nextTask.name}`;
+            stateLabel.textContent = `BREAK: Next → ${nextTask.name}`;
         } else {
-            stateLabel.textContent = 'All Completed!';
+            stateLabel.textContent = 'BREAK';
         }
     } else {
         stateLabel.textContent = state.currentState;
@@ -527,20 +527,47 @@ function resetTimer() {
 }
 
 /**
+ * 全タスクが完了しているかチェックし、完了していればアプリ全体をリセットする
+ * @returns {boolean} リセットが実行された場合はtrue
+ */
+function checkAndResetAllTasks() {
+    // 登録されているタスクが1つ以上あり、すべてが完了（completed）しているか確認
+    if (tasks.length > 0 && tasks.every(task => task.completed)) {
+        alert("すべてのタスクが完了しました！初期状態にリセットします。");
+        
+        // アプリ全体の完全リセット処理
+        state.isRunning = false;
+        state.currentState = 'READY';
+        state.currentPeriod = 1;
+        state.remainingTime = CONFIG.FOCUS_TIME;
+        selectedTaskId = null;
+        tasks = []; // タスク配列を空に
+        
+        // ストレージとUIの更新
+        saveTasks();
+        renderTasks();
+        updatePeriodDisplay();
+        updateStateDisplay();
+        updateTimerDisplay();
+        updatePageTitle();
+        return true;
+    }
+    return false;
+}
+
+/**
  * タイマー完了時の処理
- * FOCUS→BREAK、BREAK→FOCUSを自動的に切り替えて継続
  */
 function handleTimerComplete() {
     // チャイム再生
     playChime();
     
-    // 状態切り替え
+    // 1. FOCUS終了時の処理
     if (state.currentState === 'FOCUS') {
-        // FOCUS終了 → BREAK開始
         state.currentState = 'BREAK';
         state.remainingTime = CONFIG.BREAK_TIME;
         
-        // 選択中のタスクの進捗を更新
+        // アクティブなタスクがある場合のみ進捗を更新
         if (selectedTaskId) {
             const task = tasks.find(t => t.id === selectedTaskId);
             if (task) {
@@ -550,27 +577,32 @@ function handleTimerComplete() {
                 }
                 saveTasks();
                 renderTasks();
-                updateStateDisplay();
             }
         }
         
-        // Auto Start Breaksが有効な場合、自動的に開始
+        // 全タスク完了チェック（リセットが入った場合はここで処理を抜ける）
+        if (checkAndResetAllTasks()) return;
+        
+        // 次のタイマー自動開始判定
         if (CONFIG.autoStartBreaks) {
             startTimer();
         } else {
             state.isRunning = false;
         }
+        
+    // 2. BREAK終了時の処理
     } else if (state.currentState === 'BREAK') {
-        // BREAK終了 → 次のFOCUS開始
         state.currentState = 'FOCUS';
         state.currentPeriod++;
         state.remainingTime = CONFIG.FOCUS_TIME;
         updatePeriodDisplay();
         
-        // 次のタスクへ自動遷移
-        moveToNextTask();
+        // アクティブなタスクがある場合のみ、次のタスクへ遷移
+        if (selectedTaskId) {
+            moveToNextTask();
+        }
         
-        // Auto Start Pomodorosが有効な場合、自動的に開始
+        // 次のタイマー自動開始判定
         if (CONFIG.autoStartPomodoros) {
             startTimer();
         } else {
@@ -578,7 +610,7 @@ function handleTimerComplete() {
         }
     }
     
-    // UI更新
+    // UIの一括更新
     updateStateDisplay();
     updateTimerDisplay();
     updatePageTitle();

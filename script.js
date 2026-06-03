@@ -6,7 +6,7 @@ const DEFAULT_CONFIG = {
     shortBreakTime: 10,  // 10分
     autoStartBreaks: false,
     autoStartPomodoros: false,
-    alarmSound: 'chime.mp3',  // デフォルトのアラーム音
+    alarmSound: 'School.mp3',  // デフォルトのアラーム音
 };
 
 let CONFIG = {
@@ -14,19 +14,18 @@ let CONFIG = {
     BREAK_TIME: 10 * 60,      // BREAK時間：10分（秒単位）
     autoStartBreaks: false,
     autoStartPomodoros: false,
-    CHIME_FILE: 'chime.mp3',  // チャイム音声ファイル
+    CHIME_FILE: 'School.mp3',  // チャイム音声ファイル
 };
 
 // 利用可能なアラーム音
 const AVAILABLE_SOUNDS = [
-    'Bush_Warbler.mp3',
-    'Glocken.mp3',
-    'Phrase.mp3',
-    'Smartphone.mp3',
-    'Winning.mp3',
-    'chime.mp3',
-    'pin.mp3',
-    'pinpon.mp3'
+    'Phone.mp3',
+    'Pirorin.mp3',
+    'School.mp3',
+    'ShortBell1.mp3',
+    'ShortBell2.mp3',
+    'Uguisu.mp3',
+    'Winning.mp3'
 ];
 
 // ================================

@@ -229,6 +229,11 @@ body {
     color: #ffffff;
 }
 
+.task-header-buttons {
+    display: flex;
+    gap: 8px;
+}
+
 .add-task-btn {
     background-color: #222223;
     color: #ffffff;
@@ -244,6 +249,23 @@ body {
 .add-task-btn:hover {
     background-color: #2a2a2b;
     border-color: #444444;
+}
+
+.delete-selected-btn {
+    background-color: transparent;
+    color: #ff6b6b;
+    border: 1px solid #ff6b6b;
+    border-radius: 6px;
+    padding: 8px 16px;
+    font-size: 0.9rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.delete-selected-btn:hover {
+    background-color: #ff6b6b;
+    color: #ffffff;
 }
 
 .task-list {

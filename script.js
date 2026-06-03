@@ -50,6 +50,7 @@ const autoStartPomodorosInput = document.getElementById('auto-start-pomodoros');
 
 // タスク管理関連のDOM要素
 const addTaskBtn = document.getElementById('add-task-btn');
+const deleteSelectedBtn = document.getElementById('delete-selected-btn');
 const taskList = document.getElementById('task-list');
 const taskModal = document.getElementById('task-modal');
 const closeTaskModalBtn = document.getElementById('close-task-modal-btn');
@@ -67,6 +68,7 @@ const currentTaskDisplay = document.getElementById('current-task-display');
 let tasks = [];
 let selectedTaskId = null;
 let editingTaskId = null;
+let selectedTasks = new Set();
 
 /**
  * タスクをlocalStorageから読み込む
@@ -97,9 +99,11 @@ function renderTasks() {
         taskItem.className = 'task-item';
         taskItem.dataset.taskId = task.id;
         
+        const isSelected = selectedTasks.has(task.id);
+        
         taskItem.innerHTML = `
             <div class="task-item-left">
-                <div class="task-checkbox ${task.completed ? 'checked' : ''}"></div>
+                <div class="task-checkbox ${isSelected ? 'checked' : ''}" data-task-id="${task.id}"></div>
                 <div class="task-info">
                     <div class="task-name">${task.name}</div>
                     <div class="task-progress">${task.completedSessions}/${task.targetSessions}</div>
@@ -118,6 +122,13 @@ function renderTasks() {
         
         taskList.appendChild(taskItem);
         
+        // チェックボックスイベント
+        const checkbox = taskItem.querySelector('.task-checkbox');
+        checkbox.addEventListener('click', (e) => {
+            e.stopPropagation();
+            toggleTaskSelection(task.id);
+        });
+        
         // メニューボタンイベント
         const menuBtn = taskItem.querySelector('.task-menu-btn');
         menuBtn.addEventListener('click', (e) => {
@@ -131,6 +142,51 @@ function renderTasks() {
             }
         });
     });
+    
+    // Delete Selectedボタンの表示/非表示
+    updateDeleteSelectedButton();
+}
+
+/**
+ * タスクの選択状態を切り替える
+ */
+function toggleTaskSelection(taskId) {
+    if (selectedTasks.has(taskId)) {
+        selectedTasks.delete(taskId);
+    } else {
+        selectedTasks.add(taskId);
+    }
+    renderTasks();
+}
+
+/**
+ * Delete Selectedボタンの表示/非表示を更新する
+ */
+function updateDeleteSelectedButton() {
+    if (selectedTasks.size > 0) {
+        deleteSelectedBtn.style.display = 'block';
+    } else {
+        deleteSelectedBtn.style.display = 'none';
+    }
+}
+
+/**
+ * 選択されたタスクを一括削除する
+ */
+function deleteSelectedTasks() {
+    if (selectedTasks.size === 0) return;
+    
+    tasks = tasks.filter(task => !selectedTasks.has(task.id));
+    
+    // 選択中のタスクが削除された場合、選択を解除
+    if (selectedTaskId && selectedTasks.has(selectedTaskId)) {
+        selectedTaskId = null;
+        updateCurrentTaskDisplay();
+    }
+    
+    selectedTasks.clear();
+    saveTasks();
+    renderTasks();
 }
 
 /**
@@ -598,6 +654,15 @@ autoStartPomodorosInput.addEventListener('change', handleSettingChange);
 addTaskBtn.addEventListener('click', () => {
     editingTaskId = null;
     openTaskModal(false);
+});
+
+// Delete Selectedボタン
+deleteSelectedBtn.addEventListener('click', () => {
+    if (selectedTasks.size > 0) {
+        if (confirm(`Are you sure you want to delete ${selectedTasks.size} task(s)?`)) {
+            deleteSelectedTasks();
+        }
+    }
 });
 
 // タスクモーダルを閉じる

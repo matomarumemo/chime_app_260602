@@ -57,7 +57,7 @@ const taskModalTitle = document.getElementById('task-modal-title');
 const taskNameInput = document.getElementById('task-name');
 const taskSessionsInput = document.getElementById('task-sessions');
 const saveTaskBtn = document.getElementById('save-task-btn');
-const taskMenuModal = document.getElementById('task-menu-modal');
+const taskContextMenu = document.getElementById('task-context-menu');
 const editTaskBtn = document.getElementById('edit-task-btn');
 const deleteTaskBtn = document.getElementById('delete-task-btn');
 const currentTaskDisplay = document.getElementById('current-task-display');
@@ -132,7 +132,7 @@ function renderTasks() {
     const menuBtn = taskItem.querySelector('.task-menu-btn');
     menuBtn.addEventListener('click', (e) => {
         e.stopPropagation();
-        showTaskMenu(task.id);
+        showTaskMenu(task.id, menuBtn);
     });
 }
 
@@ -227,18 +227,26 @@ function closeTaskModal() {
 }
 
 /**
- * タスクメニューモーダルを表示する
+ * タスクコンテキストメニューを表示する
  */
-function showTaskMenu(taskId) {
+function showTaskMenu(taskId, buttonElement) {
     editingTaskId = taskId;
-    taskMenuModal.classList.add('active');
+    
+    // ボタンの位置を取得
+    const rect = buttonElement.getBoundingClientRect();
+    
+    // コンテキストメニューの位置を設定（ボタンの右側に表示）
+    taskContextMenu.style.top = `${rect.bottom + 5}px`;
+    taskContextMenu.style.right = `${window.innerWidth - rect.right}px`;
+    
+    taskContextMenu.classList.add('active');
 }
 
 /**
- * タスクメニューモーダルを閉じる
+ * タスクコンテキストメニューを閉じる
  */
-function closeTaskMenuModal() {
-    taskMenuModal.classList.remove('active');
+function closeTaskContextMenu() {
+    taskContextMenu.classList.remove('active');
     editingTaskId = null;
 }
 
@@ -645,29 +653,29 @@ taskModal.addEventListener('click', (e) => {
     }
 });
 
-// タスクメニューモーダルの編集ボタン
+// タスクコンテキストメニューの編集ボタン
 editTaskBtn.addEventListener('click', () => {
     const task = tasks.find(t => t.id === editingTaskId);
     if (task) {
         taskNameInput.value = task.name;
         taskSessionsInput.value = task.targetSessions;
-        closeTaskMenuModal();
+        closeTaskContextMenu();
         openTaskModal(true);
     }
 });
 
-// タスクメニューモーダルの削除ボタン
+// タスクコンテキストメニューの削除ボタン
 deleteTaskBtn.addEventListener('click', () => {
     if (editingTaskId) {
         deleteTask(editingTaskId);
     }
-    closeTaskMenuModal();
+    closeTaskContextMenu();
 });
 
-// タスクメニューモーダル外クリックで閉じる
-taskMenuModal.addEventListener('click', (e) => {
-    if (e.target === taskMenuModal) {
-        closeTaskMenuModal();
+// ドキュメントクリックでコンテキストメニューを閉じる
+document.addEventListener('click', (e) => {
+    if (!e.target.closest('.task-context-menu') && !e.target.closest('.task-menu-btn')) {
+        closeTaskContextMenu();
     }
 });
 

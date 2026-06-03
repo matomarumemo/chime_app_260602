@@ -501,11 +501,11 @@ function updateStateDisplay() {
         return;
     }
     
-    // タスクがアクティブかどうかを判定
-    const hasActiveTasks = tasks.length > 0 && selectedTasks && selectedTasks.size > 0;
+    // タスクがアクティブかどうかを判定（タスクが存在し、タイマー用のタスクが選択されているか）
+    const hasActiveTasks = tasks.length > 0 && selectedTaskId;
     
     if (state.currentState === 'FOCUS') {
-        if (hasActiveTasks && selectedTaskId) {
+        if (hasActiveTasks) {
             const task = tasks.find(t => t.id === selectedTaskId);
             if (task) {
                 stateLabel.textContent = task.name;

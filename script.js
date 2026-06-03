@@ -130,10 +130,10 @@ function renderTasks() {
         menuBtn.addEventListener('click', (e) => {
             e.stopPropagation();
             editingTaskId = task.id;
-            const task = tasks.find(t => t.id === task.id);
-            if (task) {
-                taskNameInput.value = task.name;
-                taskSessionsInput.value = task.targetSessions;
+            const currentTask = tasks.find(t => t.id === task.id);
+            if (currentTask) {
+                taskNameInput.value = currentTask.name;
+                taskSessionsInput.value = currentTask.targetSessions;
                 openTaskModal(true);
             }
         });

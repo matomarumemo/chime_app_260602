@@ -48,6 +48,200 @@ const shortBreakTimeInput = document.getElementById('short-break-time');
 const autoStartBreaksInput = document.getElementById('auto-start-breaks');
 const autoStartPomodorosInput = document.getElementById('auto-start-pomodoros');
 
+// タスク管理関連のDOM要素
+const addTaskBtn = document.getElementById('add-task-btn');
+const taskList = document.getElementById('task-list');
+const taskModal = document.getElementById('task-modal');
+const closeTaskModalBtn = document.getElementById('close-task-modal-btn');
+const taskModalTitle = document.getElementById('task-modal-title');
+const taskNameInput = document.getElementById('task-name');
+const taskSessionsInput = document.getElementById('task-sessions');
+const saveTaskBtn = document.getElementById('save-task-btn');
+const taskMenuModal = document.getElementById('task-menu-modal');
+const editTaskBtn = document.getElementById('edit-task-btn');
+const deleteTaskBtn = document.getElementById('delete-task-btn');
+const currentTaskDisplay = document.getElementById('current-task-display');
+
+// ================================
+// タスク管理
+// ================================
+
+let tasks = [];
+let selectedTaskId = null;
+let editingTaskId = null;
+
+/**
+ * タスクをlocalStorageから読み込む
+ */
+function loadTasks() {
+    const savedTasks = localStorage.getItem('focusTimerTasks');
+    if (savedTasks) {
+        tasks = JSON.parse(savedTasks);
+        renderTasks();
+    }
+}
+
+/**
+ * タスクをlocalStorageに保存する
+ */
+function saveTasks() {
+    localStorage.setItem('focusTimerTasks', JSON.stringify(tasks));
+}
+
+/**
+ * タスクリストを描画する
+ */
+function renderTasks() {
+    taskList.innerHTML = '';
+    
+    tasks.forEach(task => {
+        const taskItem = document.createElement('div');
+        taskItem.className = `task-item ${selectedTaskId === task.id ? 'selected' : ''}`;
+        taskItem.dataset.taskId = task.id;
+        
+        taskItem.innerHTML = `
+            <div class="task-item-left">
+                <div class="task-checkbox ${task.completed ? 'checked' : ''}"></div>
+                <div class="task-info">
+                    <div class="task-name">${task.name}</div>
+                    <div class="task-progress">${task.completedSessions}/${task.targetSessions}</div>
+                </div>
+            </div>
+            <div class="task-item-right">
+                <button class="task-menu-btn" data-task-id="${task.id}">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="1"></circle>
+                        <circle cx="12" cy="5" r="1"></circle>
+                        <circle cx="12" cy="19" r="1"></circle>
+                    </svg>
+                </button>
+            </div>
+        `;
+        
+        taskList.appendChild(taskItem);
+    });
+    
+    // タスク選択イベント
+    taskItem.addEventListener('click', (e) => {
+        if (!e.target.closest('.task-menu-btn')) {
+            selectTask(task.id);
+        }
+    });
+    
+    // メニューボタンイベント
+    const menuBtn = taskItem.querySelector('.task-menu-btn');
+    menuBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        showTaskMenu(task.id);
+    });
+}
+
+/**
+ * タスクを追加する
+ */
+function addTask(name, targetSessions) {
+    const newTask = {
+        id: Date.now().toString(),
+        name: name,
+        targetSessions: targetSessions,
+        completedSessions: 0,
+        completed: false
+    };
+    
+    tasks.push(newTask);
+    saveTasks();
+    renderTasks();
+}
+
+/**
+ * タスクを編集する
+ */
+function editTask(id, name, targetSessions) {
+    const task = tasks.find(t => t.id === id);
+    if (task) {
+        task.name = name;
+        task.targetSessions = targetSessions;
+        saveTasks();
+        renderTasks();
+    }
+}
+
+/**
+ * タスクを削除する
+ */
+function deleteTask(id) {
+    tasks = tasks.filter(t => t.id !== id);
+    if (selectedTaskId === id) {
+        selectedTaskId = null;
+        updateCurrentTaskDisplay();
+    }
+    saveTasks();
+    renderTasks();
+}
+
+/**
+ * タスクを選択する
+ */
+function selectTask(id) {
+    selectedTaskId = id;
+    renderTasks();
+    updateCurrentTaskDisplay();
+}
+
+/**
+ * 現在のタスク表示を更新する
+ */
+function updateCurrentTaskDisplay() {
+    if (selectedTaskId) {
+        const task = tasks.find(t => t.id === selectedTaskId);
+        if (task) {
+            currentTaskDisplay.textContent = `- ${task.name}`;
+            currentTaskDisplay.classList.add('active');
+            return;
+        }
+    }
+    currentTaskDisplay.textContent = '';
+    currentTaskDisplay.classList.remove('active');
+}
+
+/**
+ * タスクモーダルを開く
+ */
+function openTaskModal(isEdit = false) {
+    taskModal.classList.add('active');
+    if (isEdit) {
+        taskModalTitle.textContent = 'Edit Task';
+    } else {
+        taskModalTitle.textContent = 'Add Task';
+        taskNameInput.value = '';
+        taskSessionsInput.value = 1;
+    }
+}
+
+/**
+ * タスクモーダルを閉じる
+ */
+function closeTaskModal() {
+    taskModal.classList.remove('active');
+    editingTaskId = null;
+}
+
+/**
+ * タスクメニューモーダルを表示する
+ */
+function showTaskMenu(taskId) {
+    editingTaskId = taskId;
+    taskMenuModal.classList.add('active');
+}
+
+/**
+ * タスクメニューモーダルを閉じる
+ */
+function closeTaskMenuModal() {
+    taskMenuModal.classList.remove('active');
+    editingTaskId = null;
+}
+
 // ================================
 // 設定の読み込み・保存
 // ================================
@@ -297,6 +491,19 @@ function handleTimerComplete() {
         state.currentState = 'BREAK';
         state.remainingTime = CONFIG.BREAK_TIME;
         
+        // 選択中のタスクの進捗を更新
+        if (selectedTaskId) {
+            const task = tasks.find(t => t.id === selectedTaskId);
+            if (task) {
+                task.completedSessions++;
+                if (task.completedSessions >= task.targetSessions) {
+                    task.completed = true;
+                }
+                saveTasks();
+                renderTasks();
+            }
+        }
+        
         // Auto Start Breaksが有効な場合、自動的に開始
         if (CONFIG.autoStartBreaks) {
             startTimer();
@@ -399,6 +606,71 @@ shortBreakTimeInput.addEventListener('input', handleSettingChange);
 autoStartBreaksInput.addEventListener('change', handleSettingChange);
 autoStartPomodorosInput.addEventListener('change', handleSettingChange);
 
+// ================================
+// タスク管理イベントリスナー
+// ================================
+
+// タスク追加ボタン
+addTaskBtn.addEventListener('click', () => {
+    editingTaskId = null;
+    openTaskModal(false);
+});
+
+// タスクモーダルを閉じる
+closeTaskModalBtn.addEventListener('click', closeTaskModal);
+
+// タスク保存ボタン
+saveTaskBtn.addEventListener('click', () => {
+    const name = taskNameInput.value.trim();
+    const sessions = parseInt(taskSessionsInput.value);
+    
+    if (!name) {
+        alert('Please enter a task name');
+        return;
+    }
+    
+    if (editingTaskId) {
+        editTask(editingTaskId, name, sessions);
+    } else {
+        addTask(name, sessions);
+    }
+    
+    closeTaskModal();
+});
+
+// タスクモーダル外クリックで閉じる
+taskModal.addEventListener('click', (e) => {
+    if (e.target === taskModal) {
+        closeTaskModal();
+    }
+});
+
+// タスクメニューモーダルの編集ボタン
+editTaskBtn.addEventListener('click', () => {
+    const task = tasks.find(t => t.id === editingTaskId);
+    if (task) {
+        taskNameInput.value = task.name;
+        taskSessionsInput.value = task.targetSessions;
+        closeTaskMenuModal();
+        openTaskModal(true);
+    }
+});
+
+// タスクメニューモーダルの削除ボタン
+deleteTaskBtn.addEventListener('click', () => {
+    if (editingTaskId) {
+        deleteTask(editingTaskId);
+    }
+    closeTaskMenuModal();
+});
+
+// タスクメニューモーダル外クリックで閉じる
+taskMenuModal.addEventListener('click', (e) => {
+    if (e.target === taskMenuModal) {
+        closeTaskMenuModal();
+    }
+});
+
 // Sign Inボタンクリック（プレースホルダー）
 signinBtn.addEventListener('click', () => {
     console.log('Sign In clicked - functionality to be implemented');
@@ -415,6 +687,9 @@ menuBtn.addEventListener('click', () => {
 
 // 設定を読み込む
 loadSettings();
+
+// タスクを読み込む
+loadTasks();
 
 // アプリ起動時の初期表示
 updateAllDisplays();

@@ -52,6 +52,7 @@
             <div class="state-display">
                 <span id="state-label">READY</span>
             </div>
+            <div id="current-task-display" class="current-task-display"></div>
         </div>
 
         <!-- 中央：残り時間表示 -->
@@ -70,8 +71,16 @@
             <button id="volume-btn" class="btn-volume">🔊 音量確認</button>
         </div>
 
-        <!-- 将来的な広告追加用スペース -->
-        <div id="ad-space"></div>
+        <!-- タスク管理エリア -->
+        <div class="task-container">
+            <div class="task-header">
+                <h3>Tasks</h3>
+                <button id="add-task-btn" class="add-task-btn">+ Add Task</button>
+            </div>
+            <div id="task-list" class="task-list">
+                <!-- タスクがここに動的に追加されます -->
+            </div>
+        </div>
 
         <!-- フッター -->
         <footer class="footer">
@@ -122,6 +131,39 @@
                         </div>
                     </div>
                 </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- タスク追加/編集モーダル -->
+    <div id="task-modal" class="modal">
+        <div class="modal-content task-modal-content">
+            <div class="modal-header">
+                <h2 id="task-modal-title">Add Task</h2>
+                <button id="close-task-modal-btn" class="close-btn">×</button>
+            </div>
+            <div class="modal-body">
+                <div class="input-group">
+                    <label for="task-name">Task Name</label>
+                    <input type="text" id="task-name" placeholder="Enter task name">
+                </div>
+                <div class="input-group">
+                    <label for="task-sessions">Target Sessions</label>
+                    <input type="number" id="task-sessions" value="1" min="1" max="20">
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button id="save-task-btn" class="btn btn-primary">Save</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- タスクメニューモーダル -->
+    <div id="task-menu-modal" class="modal">
+        <div class="modal-content task-menu-modal-content">
+            <div class="modal-body">
+                <button id="edit-task-btn" class="task-menu-btn">Edit</button>
+                <button id="delete-task-btn" class="task-menu-btn delete">Delete</button>
             </div>
         </div>
     </div>

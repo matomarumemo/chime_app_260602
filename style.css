@@ -117,6 +117,18 @@ body {
     letter-spacing: 2px;
 }
 
+.current-task-display {
+    font-size: 1rem;
+    color: #ffffff;
+    font-weight: 700;
+    margin-top: 8px;
+    display: none;
+}
+
+.current-task-display.active {
+    display: block;
+}
+
 /* タイマー表示エリア */
 .timer-display {
     margin-bottom: 30px;
@@ -192,6 +204,201 @@ body {
     color: #444444;
     font-size: 0.9rem;
     flex-shrink: 0;
+}
+
+/* タスク管理エリア */
+.task-container {
+    margin-top: 20px;
+    background-color: #1a1a1b;
+    border: 1px solid #2a2a2b;
+    border-radius: 8px;
+    padding: 20px;
+    flex-shrink: 0;
+}
+
+.task-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 16px;
+}
+
+.task-header h3 {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: #ffffff;
+}
+
+.add-task-btn {
+    background-color: #222223;
+    color: #ffffff;
+    border: 1px solid #333333;
+    border-radius: 6px;
+    padding: 8px 16px;
+    font-size: 0.9rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.add-task-btn:hover {
+    background-color: #2a2a2b;
+    border-color: #444444;
+}
+
+.task-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    max-height: 300px;
+    overflow-y: auto;
+}
+
+.task-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 16px;
+    background-color: #222223;
+    border: 1px solid #333333;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.task-item:hover {
+    background-color: #2a2a2b;
+    border-color: #444444;
+}
+
+.task-item.selected {
+    background-color: #2a2a2b;
+    border-color: #ffffff;
+}
+
+.task-item-left {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex: 1;
+}
+
+.task-checkbox {
+    width: 20px;
+    height: 20px;
+    border: 2px solid #444444;
+    border-radius: 4px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+}
+
+.task-checkbox.checked {
+    background-color: #ffffff;
+    border-color: #ffffff;
+}
+
+.task-checkbox.checked::after {
+    content: "✓";
+    color: #131314;
+    font-size: 14px;
+    font-weight: 700;
+}
+
+.task-info {
+    flex: 1;
+}
+
+.task-name {
+    color: #ffffff;
+    font-size: 0.95rem;
+    font-weight: 500;
+    margin-bottom: 4px;
+}
+
+.task-progress {
+    color: #888888;
+    font-size: 0.85rem;
+}
+
+.task-item-right {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.task-menu-btn {
+    background: none;
+    border: none;
+    color: #666666;
+    cursor: pointer;
+    padding: 4px;
+    border-radius: 4px;
+    transition: all 0.3s ease;
+}
+
+.task-menu-btn:hover {
+    background-color: #333333;
+    color: #ffffff;
+}
+
+/* タスクモーダル */
+.task-modal-content {
+    max-width: 400px;
+}
+
+.task-menu-modal-content {
+    max-width: 300px;
+}
+
+.task-menu-btn {
+    width: 100%;
+    padding: 12px 16px;
+    background-color: #222223;
+    color: #ffffff;
+    border: none;
+    border-radius: 6px;
+    font-size: 0.95rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-align: left;
+    margin-bottom: 8px;
+}
+
+.task-menu-btn:hover {
+    background-color: #2a2a2b;
+}
+
+.task-menu-btn.delete {
+    color: #ff6b6b;
+}
+
+.task-menu-btn.delete:hover {
+    background-color: #2a2a2b;
+    color: #ff8585;
+}
+
+.input-group input[type="text"] {
+    padding: 12px 16px;
+    background-color: #222223;
+    border: 1px solid #333333;
+    border-radius: 6px;
+    color: #ffffff;
+    font-size: 1rem;
+    font-family: inherit;
+    transition: border-color 0.3s ease;
+}
+
+.input-group input[type="text"]:focus {
+    outline: none;
+    border-color: #555555;
+}
+
+.input-group input[type="text"]::placeholder {
+    color: #666666;
 }
 
 /* 音量確認ボタンエリア */

@@ -27,7 +27,6 @@ let state = {
     currentState: 'READY',            // 現在の状態：READY, FOCUS, BREAK
     timerId: null,                     // setIntervalのID
     audioInitialized: false,           // 音声コンテキスト初期化フラグ
-    isVolumeTestPlaying: false,        // 音量テスト再生中フラグ
 };
 
 // ================================
@@ -38,7 +37,6 @@ const periodLabel = document.getElementById('period-label');
 const stateLabel = document.getElementById('state-label');
 const startBtn = document.getElementById('start-btn');
 const resetBtn = document.getElementById('reset-btn');
-const volumeBtn = document.getElementById('volume-btn');
 const settingsBtn = document.getElementById('settings-btn');
 const signinBtn = document.getElementById('signin-btn');
 const menuBtn = document.getElementById('menu-btn');
@@ -364,8 +362,7 @@ function initializeAudio() {
     
     // 音声再生完了時のイベントリスナーを設定
     audioElement.addEventListener('ended', () => {
-        state.isVolumeTestPlaying = false;
-        volumeBtn.textContent = '🔊 音量確認';
+        // 音声再生完了時の処理（必要に応じて追加）
     });
     
     state.audioInitialized = true;
@@ -704,28 +701,6 @@ startBtn.addEventListener('click', () => {
 
 // RESETボタン
 resetBtn.addEventListener('click', resetTimer);
-
-// 音量確認ボタン
-volumeBtn.addEventListener('click', () => {
-    // 音声コンテキストの初期化
-    initializeAudio();
-    
-    if (state.isVolumeTestPlaying) {
-        // 再生中の場合は停止
-        audioElement.pause();
-        audioElement.currentTime = 0;
-        state.isVolumeTestPlaying = false;
-        volumeBtn.textContent = '🔊 音量確認';
-    } else {
-        // 停止中の場合は再生
-        audioElement.currentTime = 0;
-        audioElement.play().catch(error => {
-            console.error('音声再生エラー:', error);
-        });
-        state.isVolumeTestPlaying = true;
-        volumeBtn.textContent = '🔊 再生停止';
-    }
-});
 
 // ================================
 // 設定モーダル制御

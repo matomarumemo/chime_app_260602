@@ -382,14 +382,38 @@ function previewSound() {
     const selectedSound = alarmSoundSelect.value;
     if (!selectedSound) return;
     
-    const previewAudio = new Audio(`sounds/${selectedSound}`);
-    previewAudio.play();
+    if (isPreviewPlaying && previewAudioElement) {
+        // 再生中の場合は停止
+        previewAudioElement.pause();
+        previewAudioElement.currentTime = 0;
+        isPreviewPlaying = false;
+        previewSoundBtn.textContent = '▶ Preview';
+    } else {
+        // 未再生の場合は再生開始
+        if (previewAudioElement) {
+            previewAudioElement.pause();
+            previewAudioElement.currentTime = 0;
+        }
+        
+        previewAudioElement = new Audio(`sounds/${selectedSound}`);
+        previewAudioElement.play();
+        isPreviewPlaying = true;
+        previewSoundBtn.textContent = '⏹ Stop';
+        
+        // 再生終了時にボタンをリセット
+        previewAudioElement.addEventListener('ended', () => {
+            isPreviewPlaying = false;
+            previewSoundBtn.textContent = '▶ Preview';
+        }, { once: true });
+    }
 }
 
 // ================================
 // 音声管理
 // ================================
 let audioElement = null;
+let previewAudioElement = null;
+let isPreviewPlaying = false;
 
 /**
  * 音声コンテキストを初期化する

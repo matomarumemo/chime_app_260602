@@ -647,6 +647,11 @@ body {
     background-color: #131314;
 }
 
+/* Auto Start設定を非表示 */
+.settings-section.auto-start-section {
+    display: none;
+}
+
 /* レスポンシブ対応 */
 @media (max-width: 768px) {
     #timer {

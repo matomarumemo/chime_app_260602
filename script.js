@@ -14,7 +14,7 @@ let CONFIG = {
     autoStartBreaks: false,
     autoStartPomodoros: false,
     CHIME_FILE: 'chime.mp3',  // チャイム音声ファイル
-    volume: 50,               // 音量：0-100
+    volume: 30,               // 音量：0-100
 };
 
 // ================================
@@ -38,8 +38,6 @@ const stateLabel = document.getElementById('state-label');
 const startBtn = document.getElementById('start-btn');
 const resetBtn = document.getElementById('reset-btn');
 const settingsBtn = document.getElementById('settings-btn');
-const signinBtn = document.getElementById('signin-btn');
-const menuBtn = document.getElementById('menu-btn');
 const settingsModal = document.getElementById('settings-modal');
 const closeModalBtn = document.getElementById('close-modal-btn');
 const pomodoroTimeInput = document.getElementById('pomodoro-time');
@@ -57,7 +55,7 @@ const taskList = document.getElementById('task-list');
 const taskModal = document.getElementById('task-modal');
 const closeTaskModalBtn = document.getElementById('close-task-modal-btn');
 const taskModalTitle = document.getElementById('task-modal-title');
-const taskNameInput = document.getElementById('task-name');
+const taskNameInput = document.getElementById('task-text');
 const taskSessionsInput = document.getElementById('task-sessions');
 const saveTaskBtn = document.getElementById('save-task-btn');
 const deleteTaskBtn = document.getElementById('delete-task-btn');
@@ -843,16 +841,6 @@ deleteTaskBtn.addEventListener('click', () => {
         deleteTask(editingTaskId);
     }
     closeTaskModal();
-});
-
-// Sign Inボタンクリック（未実装）
-signinBtn.addEventListener('click', () => {
-    // 未実装：何もしない
-});
-
-// Menuボタンクリック（未実装）
-menuBtn.addEventListener('click', () => {
-    // 未実装：何もしない
 });
 
 // ================================
